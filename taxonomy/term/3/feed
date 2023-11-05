@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - c#</title>
+ <link>https://turecki.net/tags/c</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>On Protobuf.Net, using AsReference and multiple instances of object which should be deserialized only once.</title>
+ <link>https://turecki.net/content/protobufnet-using-asreference-and-multiple-instances-object-which-should-be-deserialized</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;There is a ProtoBuf.Net fact regarding using AsReference which somehow I missed when digging into why [ProtoAfterDeserialization] attribute is not applied for some objects.&lt;br /&gt;
+The truth is that it is applied for some but not other objects even if I used AsReference attribute in some places.  The AsReference attribute should be applied to ALL REFERENCES TO THE OBJECT, both collections and navigational properties, NOT JUST REFERENCES OTHER THAN THE REFERENCE WE CONSIDER MAIN ONE.&lt;/p&gt;
+&lt;p&gt;A simple test to prove it is below:&lt;/p&gt;
+&lt;pre&gt;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using ProtoBuf;
+
+namespace ProtoBufAsReferenceTest
+{
+    [ProtoContract]
+    public class Office
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1)]
+        public Collection&amp;lt;Computer&amp;gt; Computers { get; private set; }
+
+        [ProtoMember(2)]
+        public Collection&amp;lt;Person&amp;gt; People { get; private set; }
+
+        public Office()
+        {
+            Computers = new Collection&amp;lt;Computer&amp;gt;();
+            People = new Collection&amp;lt;Person&amp;gt;();
+        }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+            foreach(var computer in Computers)
+            {
+                computer.Office = this;
+            }
+            foreach(var person in People)
+            {
+                person.Office = this;
+            }
+        }
+    }
+
+    [ProtoContract]
+    public class Computer
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1, AsReference = true)]
+        public Person Person { get; set; }
+
+        [ProtoIgnore]
+        public Office Office { get; set; }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+        }
+    }
+
+    [ProtoContract]
+    public class Person
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1, AsReference = true)]
+        public Computer Computer { get; set; }
+
+        [ProtoIgnore]
+        public Office Office { get; set; }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+        }
+    }
+
+    [TestFixture]
+    public class TestClasses
+    {
+        [Test]
+        public void TestAsReference()
+        {
+            // 3 instances are created 1 of each type
+            var office = new Office();
+            var computer = new Computer();
+            var developer = new Person();
+
+            office.Computers.Add(computer);
+            office.People.Add(developer);
+            computer.Person = developer;
+            developer.Computer = computer;
+
+            using(var ms = new MemoryStream())
+            {
+                Serializer.NonGeneric.Serialize(ms, office);
+                ms.Position = 0;
+                Check(Serializer.Deserialize&amp;lt;Office&amp;gt;(ms));
+            }
+        }
+
+        private void Check(Office office)
+        {
+            Assert.AreEqual(1, Office.DeserializationCounter);
+            Assert.AreEqual(1, Person.DeserializationCounter); // fails - 2
+            Assert.AreEqual(1, Computer.DeserializationCounter); // fails - 2
+            var computer = office.People.First().Computer;
+            Assert.IsNotNull(computer.Office); // fails - Office is null
+        }
+    }
+}
+&lt;/pre&gt;&lt;p&gt;
+Office class contains collections of Computers and Peoople without AsReference attribute. Person reference to the Computer for a change uses AsReference attribute. In the end 2 instances of Computer and 2 instances of Person are created.&lt;/p&gt;
+&lt;p&gt;Only change necessary to fix this problem is adding AsReference to the Office class collections:&lt;/p&gt;
+&lt;pre&gt;
+        [ProtoMember(1, AsReference = true)]
+        public Collection Computers { get; private set; }
+
+        [ProtoMember(2, AsReference = true)]
+        public Collection People { get; private set; }
+&lt;/pre&gt;&lt;p&gt;
+I am not sure if this is common mistake people make when using ProtoBuf.Net but I suspect this might be the case as none of the questions on &lt;a href=&quot;http://stackoverflow.com/&quot;&gt;StackOverflow&lt;/a&gt; I&#039;ve seen in the past mention this.&lt;br /&gt;
+Or maybe it is only me who when using word &quot;reference&quot; thinks of references to the actual object which implies having at least a single copy of the actual object marked without &quot;AsReference&quot;.&lt;br /&gt;
+Bottom line is if you use AsReference, use it everywhere the object is referenced.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/c&quot;&gt;c#&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/protobuf&quot;&gt;protobuf&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/serialization&quot;&gt;serialization&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Thu, 27 Nov 2014 14:13:47 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">23 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/protobufnet-using-asreference-and-multiple-instances-object-which-should-be-deserialized#comments</comments>
+</item>
+<item>
+ <title>FlowDocument from a different thread - &quot;The calling thread cannot access this object because a different thread owns it.&quot;</title>
+ <link>https://turecki.net/flowdocument-from-a-different-thread</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;The FlowDocument along with most of the elements it contains inherits from DispatcherObject class. This means when constructed, it becomes linked to the thread in which it was constructed and causes several implications.&lt;/p&gt;
+&lt;p&gt;   I&#039;m sure such link was created for a reason - so that FlowDocument objects presented using WPF are not modified in a background thread as the updating is probably not implemented. I also won&#039;t debate on why objects contained in FlowDocument have no common, shared way of visiting them (IAddChild interface is helping with adding but something like IHaveChildren is not implemented).&lt;/p&gt;
+&lt;p&gt;   Back to the topic - FlowDocument created by one thread cannot be used in another nor any of each one&#039;s inner objects. Or can&#039;t it? &lt;/p&gt;
+&lt;p&gt;   One solution includes serializing a document in one thread and deserializing it in another (see &lt;a href=&quot;http://chrismylonas.blogspot.co.uk/2007/12/flowdocument-and-multiple-threads.html&quot;&gt;this blog entry&lt;/a&gt;). This is a slow process as serialization is costly and serialization of a FlowDocument object with images and other graphical elements might not work at all unless XamlPackage format is used - and this one is even slower as requires ZIP compression/decompression.&lt;/p&gt;
+&lt;p&gt;Another is to create all FlowDocument objects on UI thread (see &lt;a href=&quot;http://stackoverflow.com/questions/6890000/backgroundworker-and-wpf&quot;&gt;this SO article&lt;/a&gt;). Seems easy to do but what if there are thousand of objects which need to be added to a FlowDocument and at the same time user interface should stay responsive, even if it only needs to display a progress dialog ?&lt;/p&gt;
+&lt;p&gt;I found out another way to solve this problem, it is kind of hackish but seems to do the job for my needs:&lt;/p&gt;
+&lt;pre&gt;
+public static void AttachToCurrentThread(this FlowDocument document)
+{
+	var dispatcher = Dispatcher.CurrentDispatcher;
+	var field = typeof(DispatcherObject).GetField(&quot;_dispatcher&quot;, BindingFlags.NonPublic | BindingFlags.Instance);
+	if(field == null)
+	{
+		throw new InvalidOperationException(&quot;_dispatcher property missing on DispatcherObject&quot;);
+	}
+	SetDispatcher(document, field, dispatcher, FlowDocumentVisitors);
+}
+
+private static readonly Func&amp;lt;object, object&amp;gt;[] FlowDocumentVisitors =
+{
+	x =&amp;gt; (x is FlowDocument) ? ((FlowDocument) x).Blocks : null,
+	x =&amp;gt; (x is Section) ? ((Section) x).Blocks : null,
+	x =&amp;gt; (x is BlockUIContainer) ? ((BlockUIContainer) x).Child : null,
+	x =&amp;gt; (x is InlineUIContainer) ? ((InlineUIContainer) x).Child : null,
+	x =&amp;gt; (x is Span) ? ((Span) x).Inlines : null,
+	x =&amp;gt; (x is AnchoredBlock) ? ((AnchoredBlock) x).Blocks : null,
+	x =&amp;gt; (x is Paragraph) ? ((Paragraph) x).Inlines : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).Columns : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&amp;gt; rg.Rows) : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&amp;gt; rg.Rows).SelectMany(r =&amp;gt; r.Cells) : null,
+	x =&amp;gt; (x is TableCell) ? ((TableCell) x).Blocks : null,
+	x =&amp;gt; (x is TableCell) ? ((TableCell) x).BorderBrush : null,
+	x =&amp;gt; (x is List) ? ((List) x).ListItems : null,
+	x =&amp;gt; (x is ListItem) ? ((ListItem) x).Blocks : null
+};
+	
+private static void SetDispatcher(object item, FieldInfo field, object value, params Func&amp;lt;object, object&amp;gt;[] selectors)
+{
+	if(item is DispatcherObject)
+	{
+		var currentDispatcher = field.GetValue(item);
+		if(currentDispatcher != null &amp;amp;&amp;amp; currentDispatcher != value)
+		{
+			field.SetValue(item, value);
+		}
+	}
+	if(item is IEnumerable)
+	{
+		foreach(var subItem in item as IEnumerable)
+		{
+			SetProperty(subItem, field, value, selectors);
+		}
+	}
+	if(selectors != null)
+	{
+		foreach(var selector in selectors.Select(x =&amp;gt; x(item)).Where(x =&amp;gt; x != null))
+		{
+			SetProperty(selector, field, value, selectors);
+		}
+	}
+}
+&lt;/pre&gt;&lt;p&gt;
+Basically it just traverses FlowDocument and it&#039;s objects searching for DependencyObject instances and using reflection updates the _dispatcher private variable. This variable name can change in the future, the FlowDocument structure also can change so this solution can be considered not elegant or not stable but having said that DispatcherObject didn&#039;t change since .Net 3.5 and AttachToCurrentThread function can be easily adapted to handle different types of FlowDocument blocks and it&#039;s inner objects when those inherit from DispatcherObject.&lt;/p&gt;
+&lt;p&gt;If you are just reading this paragraph then feel free to leave some feedback, especially if I missed any important collections of DispatcherObject instances in the selectors array.&lt;/p&gt;
+&lt;p&gt;Update:&lt;/p&gt;
+&lt;p&gt;The previous code was expecting an IEnumerable as input and while this is fine and optimal (less calls) but not flexible enough to handle special cases well.&lt;br /&gt;
+Unfortunately loading of a packed FlowDocument object, saved using XamlPackage format will fail on a non-STA thread (&quot;The calling thread must be STA, because many UI components require this&quot; exception  thrown when TextRange.Load is called on a non-UI thread). This is a show-stopper for me so I can&#039;t use the code above anymore but it might become handy for someone not using Images.&lt;br /&gt;
+I also updated it to support tables and lists and commented out style handling which I did not need (Styles are usually not tied to a thread anyway).&lt;br /&gt;
+Actually the code can be generalized to handle any object, just change AttachToCurrentThread document argument type to object.&lt;/p&gt;
+&lt;p&gt;Update 2:&lt;br /&gt;
+Some cosmetic changes and added a couple additional FlowDocument elements in a visitor.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/c&quot;&gt;c#&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/flowdocument&quot;&gt;flowdocument&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Mon, 07 Jul 2014 14:28:23 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">20 at https://turecki.net</guid>
+ <comments>https://turecki.net/flowdocument-from-a-different-thread#comments</comments>
+</item>
+<item>
+ <title>Kalkulator wygranych amino lotto 2009 oraz 2010</title>
+ <link>https://turecki.net/content/kalkulator-wygranych-amino-lotto-2009-oraz-2010</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;div&gt;Do końca roku &lt;a href=&quot;http://www.amino.pl&quot;&gt;Amino&lt;/a&gt; przygotowało ciekawą &lt;a href=&quot;http://www.aminolotto.pl/&quot;&gt;loterię&lt;/a&gt; - mozna wygrać wielokrotność 1000 złotych, ale nie więcej niż 10000 zł zbierając opakowania na przyprawy z zupek, na których jest jedna lub dwie kwoty, które należy sumować. Do tej żmudnej operacji przygotowałem narzędzie, które jest zdecydowanie łatwiejsze w użyciu niż kalkulator na stronie producenta.&lt;/div&gt;
+&lt;a href=&quot;/sites/default/files/amino.png&quot;&gt;&lt;img src=&quot;/sites/default/files/amino_tn.png&quot; style=&quot;float: left; margin: 10px;&quot;&gt;&lt;/a&gt;
+&lt;!--break--&gt;
+Wiadomo, że szanse wygranej są na tyle duże, na ile drukowane liczby są spreparowane przez producenta tak, aby sumy dawały okrągłe liczby tylko dla pewnej części opakowań, a z tego co zdążyłem zauważyć pula liczb jest dość ograniczona dając bardzo przewidywalne ilości wygranych. Z mojej puli liczb, nawet powtórzonej kilkukrotnie, nie udało się uzyskać żadnej wygranej. Pomimo tego spróbować można, w końcu zupki Amino nie są takie złe :)
+&lt;br&gt;&lt;br&gt;
+Kalkulator korzysta ze słownika liczb umieszczonego w folderze z programem, o nazwie &quot;amino.txt&quot;, który wczytuje przy otwieraniu programu i zapisuje przy zamykaniu, aby ułatwić zarządzanie swoją indywidualną pulą liczb. Liczby wprowadza się w nowych liniach lub przez oddzielenie spacjami, a słowa które nie są liczbami są pomijane. Parametry wyliczania można zmienić, jeśli kiedyś powstanie inna podobna loteria. Przycisk wylicz powoduje wyszukanie wygranych, znajdywane są wszystkie kombinacje liczb (również wielokrotne wystąpienia tych samych) i wiadomo - lepiej wybrać najwyższą lub zebrać więcej opakowań i poczekać na jeszcze wyższą.
+&lt;br&gt;&lt;br&gt;
+Dołączam też źródła programu z licencją &quot;róbta co chceta&quot; w zamian za podziękowanie w komentarzu.
+&lt;br&gt;&lt;br&gt;
+&lt;!--
+&lt;a href=&quot;http://www.allegro.pl/item799704229_amino_lotto_program_wspiera_szukanie_wygranych.html&quot;  onclick=&quot;window.open(this.href); return false;&quot;&gt;&lt;img src=&quot;/app/kuponima.gif&quot;&gt;&lt;/a&gt;
+&lt;br&gt;&lt;br&gt; --&gt;
+&lt;em&gt;Aktualizacja&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+Ponieważ program nie działał wystarczająco szybko przy dużej ilości wprowadzonych liczb, przerobiłem go tak aby używał HashSet i wyznaczał wartość hash dla szukanych sum:
+&lt;br&gt;&lt;br&gt;
+&lt;code&gt;
+int hash = (nums.IndexOf(item) + 1) * num.Value;
+int sumHash = hash1 ^ hash2;
+&lt;/code&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;em&gt;Aktualizacja&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+Na stronie &lt;a href=&quot;http://www.e-konkursy.info/forum/post-870037-cat-1-pg-20.html&quot;&gt;http://www.e-konkursy.info/forum/post-870037-cat-1-pg-20.html&lt;/a&gt; jest umieszczony wątek na temat konkursu. Z kwot uzbieranych przez forumowiczów jasno wynika, że gdy liczba znaleziona w opakowaniu jest podzielna przez 11 wygranej nie będzie, gdyż suma dowolnych liczb podzielnych przez 11 nie da wielokrotności liczby 1000 mniejszej niż 11000. Tak czy inaczej kalkulator pomoże znaleźć kombinację liczb dającą najwyższą wygraną, jeśli łut szczęścia dopisze i trafimy na liczbę niepodzielną przez 11. Powodzenia !
+&lt;br&gt;&lt;br&gt;
+&lt;em&gt;Aktualizacja 24.09.2009 (wersja 2.0)&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+Przygotowałem kolejną wersję programu, która w porównaniu z poprzednią nie pokazuje powtarzających się wygranych, liczy dużo pewniej niż poprzednia i zdecydowanie szybciej. Uaktualniony jest też kod źródłowy programu do pobrania (amino_source.zip). Wszystkich zgłoszonych błędów już nie ma, ale oczywiście do uruchomienia programu potrzebny jest .Net framework 3.5 &lt;b&gt;SP1&lt;/b&gt; - (&lt;a href=&quot;http://www.microsoft.com/downloads/details.aspx?FamilyID=AB99342F-5D1A-413D-8319-81DA479AB0D7&amp;displaylang=pl&quot;&gt;http://www.microsoft.com/downloads/details.aspx?FamilyID=AB99342F-5D1A-413D-8319-81DA479AB0D7&amp;displaylang=pl&lt;/a&gt;)
+&lt;br&gt;&lt;br&gt;
+&lt;em&gt;Aktualizacja 15.10.2009 (wersja 2.5)&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+W związku z licznymi prośbami o szybsze działanie programu dziś powstała nowa wersja, która przed wyszukaniem kombinacji liczb szuka liczb podzielnych przez 11 i jeśli wszystkie liczby są podzielne przez 11, informuje, że nie znaleziono wygranej. Oczywiście liczbę 11 można zmienić lub nie wpisać jej wcale. W prawdzie jest to tylko ominięcie problemu, ale dla loterii jest całkiem skuteczne - jeśli masz dużo liczb i program się zawiesi przy liczeniu to prawdopodobnie masz wygraną :) &lt;br&gt;
+Przyspieszenie liczenia kombinacji jest możliwe, ale wymaga stosowania bardziej złożonych technik liczenia kombinacji, a &quot;brutalne&quot; liczenie (prawie) wszystkich kombinacji użyte w programie jest bardzo czasochłonne stąd mała jego wydajność - ilość obliczeń dla każdej kolejnej ilości wygranych liczb wyznaczana jest według wzoru: &lt;a href=&quot;http://pl.wikipedia.org/wiki/Kombinacja_bez_powtórzeń&quot;&gt;http://pl.wikipedia.org/wiki/Kombinacja_bez_powtórzeń&lt;/a&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;em&gt;Aktualizacja 22.11.2009&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+Do sprawdzania podzielności kwot przez 11 i szukania potencjalnych wygranych przygotowałem kalkulator online, który we wprowadzonym tekście wyszukuje kwoty trzy i czterocyfrowe, które mogą dać wygraną. Zbieżność dnia i miesiąca dzisiejszej daty z podzielnością w loterii amino jest czysto przypadkowa :)
+&lt;br&gt;&lt;br&gt;
+&lt;em&gt;Aktualizacja 29.12.2009&lt;/em&gt;
+&lt;br&gt;&lt;br&gt;
+Ponieważ loteria dobiega końca, udostępniłem do pobrania kalkulator onima.exe, który 2-3 miesiące temu był wystawiony na allegro, a w międzyczasie został dopracowany. Kalkulator jest szybki i bezbłędny, polecam.
+&lt;br&gt;&lt;br&gt;
+&lt;strong&gt;&lt;em&gt;Aktualizacja 18.07.2010&lt;/em&gt;&lt;/strong&gt;
+&lt;br&gt;&lt;br&gt;
+Witam wszystkich! Nie miałem możliwości śledzenia losów nowej loterii, więc aktualizuję stronę dopiero teraz. Tym razem loterię sponsoruje liczba 13, więc zrobiłem kilka zmian - szukanie liczb podzielnych przez 13 działa od dzisiaj na stronie w forumlarzu poniżej, można szybko sprawdzić czy mamy wygrywającą liczbę. W pobieralni wrzuciłem onima2010.exe, który liczy zgodnie z zasadami nowej loterii i znajduje kombinacje liczb dające wygraną. Niestety nie gwarantuję, że program działa poprawnie, gdyż piszę z wysp i nie widziałem loterii na oczy, sugeruję się tylko tym co piszecie poniżej. Powodzenia!
+&lt;br&gt;&lt;br&gt;
+&lt;strong&gt;&lt;em&gt;Aktualizacja 20.07.2010&lt;/em&gt;&lt;/strong&gt;
+&lt;br&gt;&lt;br&gt;
+Jeszcze o licencji: kalkulator onima (2009 i 2010) jest i będzie darmowy, możecie go używać bez ograniczeń, jednak nie można go sprzedawać, modyfikować czy podszywać się pod autora. Jeśli ktoś z Was znajdzie onima2010 w sprzedaży na &lt;a href=&quot;http://www.allegro.pl&quot;&gt;Allegro&lt;/a&gt;, &lt;a href=&quot;http://www.ebay.pl&quot;&gt;Ebay&lt;/a&gt; lub innym serwisie aukcyjno-ogłoszeniowym, dajcie znać w komentarzach, a najlepiej od razu zgłoście do obsługi tego serwisu jako naruszenie regulaminu. Dzięki, pozdrawiam.
+&lt;br&gt;&lt;br&gt;
+&lt;strong&gt;Wyszukiwarka liczb wygrywających&lt;/strong&gt;&lt;br&gt;
+Wprowadź do pola poniżej liczby, oddzielone dowolnymi znakami i naciśnij Szukaj.
+&lt;a href=&quot;/pl/node/6&quot;&gt;&lt;img src=&quot;/app/animsledz.gif&quot; style=&quot;float:right; margin: 2px;&quot;&gt;&lt;/a&gt;
+&lt;textarea id=&quot;numbers&quot; style=&quot;width: 487px; height: 200px;&quot;&gt;&lt;/textarea&gt;
+&lt;br&gt;&lt;br&gt;
+&lt;button onclick=&quot;
+        var numbers = document.getElementById(&#039;numbers&#039;).value.match(/\d{3,4}/g);
+        if(numbers == null)
+        {
+            document.getElementById(&#039;result&#039;).innerHTML = &#039;Nie podano prawidłowych kwot&lt;br&gt;&#039;;
+            return;
+        }
+        document.getElementById(&#039;numbers&#039;).value = numbers.join(&#039; &#039;);
+
+        var winning = new Array();
+        var missed = new Array();
+        for(var n = numbers.length - 1; n &gt;= 0; n--)
+        {
+             if(numbers[n] % 13 == 0) continue;
+             var target = (13 - (numbers[n] % 13)) * 1000;
+             if(target &lt; numbers[n] || target &gt; 10000) missed.push(numbers[n]); else winning.push(numbers[n]);
+        }
+
+        var result = &#039;Ilość wprowadzonych kwot: &#039; + numbers.length + &#039;&lt;br&gt;&#039;;
+        if(missed.length &gt; 0)
+             result += &#039;Kwoty wygrywajace poza zakresem (wygrana mniejsza od samej kwoty lub większa od 10000): &#039; + missed.join(&#039; &#039;) + &#039;&lt;br&gt;&#039;;
+        if(winning.length == 0)
+              result += &#039;Brak wygranych, wszystkie kwoty podzielne przez 13.&lt;br&gt;&#039;;
+        else
+        {
+			  for(var w = winning.length - 1; w &gt;= 0; w--)
+              {
+                    result += &#039;Wygrywająca kwota: &#039; + winning[w] + &#039; (wygrana &#039; +  (13 - (winning[w] % 13)) * 1000 + &#039; zł)&lt;br&gt;&#039;;
+              }
+        }
+
+        document.getElementById(&#039;result&#039;).innerHTML = result;
+&quot;&gt;Szukaj&lt;/button&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;&lt;!--
+google_ad_client = &quot;pub-7061782024161962&quot;;
+/* 468x60, created 9/21/09 */
+google_ad_slot = &quot;2243263131&quot;;
+google_ad_width = 468;
+google_ad_height = 60;
+//--&gt;
+&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;
+src=&quot;http://pagead2.googlesyndication.com/pagead/show_ads.js&quot;&gt;
+&lt;/script&gt;
+&lt;div style=&quot;width: 97%; min-height: 72px; padding: 10px; font: 11pt tahoma;&quot;&gt;
+&lt;div id=&quot;result&quot; style=&quot;margin: 10px;&quot;&gt;
+Wklej tekst do pola powyżej i naciśnij przycisk &quot;Wylicz&quot; ...
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;br&gt;
+&lt;form action=&quot;https://www.paypal.com/cgi-bin/webscr&quot; method=&quot;post&quot;&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;cmd&quot; value=&quot;_s-xclick&quot;&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;encrypted&quot; value=&quot;-----BEGIN PKCS7-----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-----END PKCS7-----
+&quot;&gt;
+&lt;input type=&quot;image&quot; src=&quot;https://www.paypal.com/pl_PL/PL/i/btn/btn_donateCC_LG.gif&quot; border=&quot;0&quot; name=&quot;submit&quot; alt=&quot;PayPal — Płać wygodnie i bezpiecznie&quot;&gt;
+&lt;img alt=&quot;&quot; border=&quot;0&quot; src=&quot;https://www.paypal.com/en_GB/i/scr/pixel.gif&quot; width=&quot;1&quot; height=&quot;1&quot;&gt;
+&lt;/form&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-msdos-program&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/onima.exe&quot; type=&quot;application/x-msdos-program; length=20480&quot; title=&quot;onima.exe&quot;&gt;onima.exe - wydajny kalkulator (loteria 2009)&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;20 KB&lt;/td&gt; &lt;/tr&gt;
+ &lt;tr class=&quot;even&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-msdos-program&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/onima2010.exe&quot; type=&quot;application/x-msdos-program; length=20480&quot; title=&quot;onima2010.exe&quot;&gt;onima2010.exe&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;20 KB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/c&quot;&gt;c#&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Sat, 29 Aug 2009 09:44:58 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">7 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/kalkulator-wygranych-amino-lotto-2009-oraz-2010#comments</comments>
+</item>
+</channel>
+</rss>

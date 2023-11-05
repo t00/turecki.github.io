@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - jtag</title>
+ <link>https://turecki.net/tags/jtag</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Flashing bricked TP-LINK AC1200 Archer C5 v1.20 using JTAG cable</title>
+ <link>https://turecki.net/content/flashing-bricked-tp-link-ac1200-archer-c5-v120-using-jtag-cable</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Here is a short list of steps involved. &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Connect JTAG cable to 3.3V capable serial interface.
+&lt;/li&gt;&lt;li&gt;Make sure that cable has TX and RX swapped and only GND is connected, VCC should not be.
+&lt;/li&gt;&lt;li&gt;Run putty or other terminal software. Use baud rate 115200, 8 data bits + 1 stop bit, no parity or flow control
+&lt;/li&gt;&lt;li&gt;Boot router into UBoot by holding WPS/Reset switch when powering up. This will set router&#039;s IP address to 192.168.0.86 and it will try to boot from TFTP server 192.168.0.66 and download ArcherC5v1_tp_recovery.bin file from root drive. This way any firmware without boot can be flashed without JTAG cable. Firmware with boot (in name) should be stripped of it by running:&lt;br /&gt;
+&lt;pre&gt;dd if=firmware.bin of=stripped.bin bs=512 skip=257&lt;/pre&gt;&lt;p&gt;But yours is bricked, right?&lt;/p&gt;
+&lt;/li&gt;&lt;li&gt;Get access to the UBoot console: when the message &quot;Autobooting in 1 seconds&quot; appears, quickly type &quot;tpl&quot;. Remember - you have 1 second to type it :) UBoot console will welcome you with ap135&amp;gt; prompt.
+&lt;/li&gt;&lt;li&gt;Put &quot;firmware_noboot.bin&quot; in a root directory of your TFTP server and run following commands:&lt;br /&gt;
+&lt;pre&gt;setenv ipaddr 192.168.0.86
+setenv serverip 192.168.0.66
+tftp 0x81000000 firmware_noboot.bin
+erase 0x9f020000 +f80000
+cp.b 0x81000000 0x9f020000 0xf80000
+bootm 0x9f020000
+(or reset)
+&lt;/pre&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;After router reboots or 5 minutes passed it should now work (finally). Console should show normal linux boot process instead of an error loading kernel.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/jtag&quot;&gt;jtag&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/router&quot;&gt;router&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/hardware&quot;&gt;hardware&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Sat, 19 Sep 2015 01:40:32 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">27 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/flashing-bricked-tp-link-ac1200-archer-c5-v120-using-jtag-cable#comments</comments>
+</item>
+</channel>
+</rss>

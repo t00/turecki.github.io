@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - encryption</title>
+ <link>https://turecki.net/tags/encryption</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>AnalysisLog.sr0 decrypted</title>
+ <link>https://turecki.net/analysislog-sr0-decrypted</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Curiosity is one important part of the engine of progress. Recently I&#039;ve sent a bug report as Test Drive Unlimited 2 crashes on Windows Server 2012 and one of the files was named AnalysisLog.sr0.&lt;br /&gt;
+It was created after a crash after I was kindly asked to voluntarily create it.&lt;br /&gt;
+What&#039;s inside? As &lt;a href=&quot;http://www.moreawesomethanyou.com/smf/index.php?action=printpage;topic=9971.0&quot;&gt;some&lt;/a&gt; suggest it contains encrypted private information.&lt;/p&gt;
+&lt;p&gt;What are the actual contents?&lt;/p&gt;
+&lt;p&gt;Using &lt;a href=&quot;http://notepad-plus-plus.org/&quot;&gt;my favourite text editor&lt;/a&gt; it was easy to check that the sr0 file is just a hexadecimal representation of binary data starting with X letter, for example: X5C2D25333321272533....&lt;/p&gt;
+&lt;p&gt;Easy enough, I removed the initial X letter from the text file and then using &lt;a href=&quot;http://texteditors.org/cgi-bin/wiki.pl?Tiny_Hexer&quot;&gt;TinyHexer&lt;/a&gt; (&lt;a href=&quot;http://www.mirkes.de/&quot;&gt;original website&lt;/a&gt; is down for some reason) import feature I loaded hexadecimal text which showed the intended contents of this file, now in binary.&lt;/p&gt;
+&lt;p&gt;The binary data looks like it is encrypted, texts are nowhere to be found but I&#039;ve noticed patterns are emerging in the file, especially repetitive exact sentences of characters at random offsets. This suggests two things:&lt;/p&gt;
+&lt;p&gt; 1. the file is not encrypted using a strong cipher in which repetitions can occur but only in large segments of identical data with the offset matching the multiple of cipher length.&lt;br /&gt;
+ 2. encryption key length is one byte because of randomly offseted identical data.&lt;/p&gt;
+&lt;p&gt;These two hints are enough to guess it must be one of a few simple tricks to hide information - XOR or ROR/ROL/ROT-x, most probably XOR, second most ROR or ROL.&lt;/p&gt;
+&lt;p&gt;A wild guess by looking at the beginning of the file gave me a clue - multiple subsequent 60 hexadecimal must be either spaces or nulls so using TinyHexer Tools -&amp;gt; Scripts -&amp;gt; XOR file data feature I managed to find out that 0x60 (96 decimal) is the key.&lt;/p&gt;
+&lt;p&gt;To sum things up:&lt;br /&gt;
+1. With a text editor remove leading X from the AnalysisLog.sr0 file&lt;br /&gt;
+2. Using TinyHexer File -&amp;gt; Import -&amp;gt; Import -&amp;gt; (select file) -&amp;gt; hex text convert hexadecimal text to binary (and save)&lt;br /&gt;
+3. Using  TinyHexer Tools -&amp;gt; Scripts -&amp;gt; XOR file data -&amp;gt; leave position and count unchanged and type in 96 as XOR value&lt;/p&gt;
+&lt;p&gt;The file looks like a serialized binary object with hexadecimal identifiers and unencrypted values of these identifiers. Identifiers look like a sort of random GUID type values yet looks can be deceiving in this case especially because these identifiers have different lenght, so we might have another encryption here.&lt;br /&gt;
+In a spare time I&#039;ll look into it further.&lt;/p&gt;
+&lt;p&gt;Thanks for reading.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/encryption&quot;&gt;encryption&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/hacking&quot;&gt;hacking&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Sun, 31 Mar 2013 10:43:36 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">17 at https://turecki.net</guid>
+ <comments>https://turecki.net/analysislog-sr0-decrypted#comments</comments>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="25.html" />
+<link rel="shortlink" href="25.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="shortcut icon" href="../sites/all/themes/nexus/favicon.ico" type="image/vnd.microsoft.icon" />
+<title>Getting the most out of SSH - hardware acceleration tuning for AES-NI | Michał Turecki</title>
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_srkZYgj6sRCmlRFbg8RXZZwmQlPsaT26X9fTuwxh_UE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_Y5uCOCfOAkjUfMmBhpaWVcM3oH3I5BZx329toWp0ukA.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_5aQvY9eDN5XIiayMtb_05FejVu1px73z0dS0wFjNJKo.css" media="all" />
+<script type="text/javascript" src="../sites/default/files/js/js_QwNzQiXbTATgX0M-_QL1qnwVy0bhzhL0wFmwNDj-VCg.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_j5mWRs_KOxlU6vD_LGLwhVkufrLTlEWol4E0UDyFzd4.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_ZPMVUwauT3CzfUSIYk-Kc3nwhp80i90VcKjYuHm5owQ.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_38dYfT5tBcNRDpGLvmZst3EvwIKHRrNMAUPl_CmZHoU.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","setHasJsCookie":0,"ajaxPageState":{"theme":"nexus","theme_token":"bJuvmXEcEQ-XvF3Z288ZLwtt8X83c7syurA8ludYjnI","js":{"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.11\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/prettify\/src\/prettify.js":1,"sites\/all\/libraries\/prettify\/src\/lang-css.js":1,"sites\/all\/libraries\/prettify\/src\/lang-sql.js":1,"sites\/all\/modules\/prettify\/prettify.loader.js":1,"sites\/all\/themes\/nexus\/js\/bootstrap.min.js":1,"sites\/all\/themes\/nexus\/js\/superfish.js":1,"sites\/all\/themes\/nexus\/js\/mobilemenu.js":1,"sites\/all\/themes\/nexus\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/aggregator\/aggregator.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/poll\/poll.css":1,"modules\/user\/user.css":1,"modules\/forum\/forum.css":1,"sites\/all\/themes\/nexus\/css\/bootstrap.min.css":1,"sites\/all\/themes\/nexus\/css\/flexslider.css":1,"sites\/all\/themes\/nexus\/style.css":1,"sites\/all\/modules\/prettify\/styles\/stackoverflow.css":1}},"prettify":{"linenums":false,"match":".content","nocode":"no-code","custom":[],"markup":{"code":true,"pre":true,"precode":false}}});
+//--><!]]>
+</script>
+<!--[if lt IE 9]><script src="/sites/all/themes/nexus/js/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-first page-node page-node- page-node-25 node-type-story">
+    <div id="page">
+  <header id="masthead" class="site-header container" role="banner">
+    <div class="row">
+      <div id="logo" class="site-branding col-sm-6">
+                <h1 id="site-title">
+          <a href="../node.html" title="Home">Michał Turecki</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mainmenu">
+        <div class="mobilenavi"></div>
+        <nav id="navigation" role="navigation">
+          <div id="main-menu">
+                      </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+  
+  
+  
+    <div id="main-content">
+    <div class="container"> 
+      <div class="row">
+                <div id="primary" class="content-area col-sm-8">
+          <section id="content" role="main" class="clearfix">
+            <div id="breadcrumbs"><h2 class="element-invisible">You are here</h2><nav class="breadcrumb"><a href="../node.html">Home</a> » Getting the most out of SSH - hardware acceleration tuning for AES-NI</nav></div>                                    <div id="content-wrap">
+                            <h1 class="page-title">Getting the most out of SSH - hardware acceleration tuning for AES-NI</h1>                                                                      <div class="region region-content">
+  <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+                          
+              <ul class="meta clearfix">
+          <li><strong>Posted on:</strong> 3 September 2015</li>
+          <li><strong>By:</strong> <span class="username">Michał Turecki</span></li>   
+        </ul>
+      
+    
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even"><p>On Intel some OpenSSH ciphers use hardware accelerated AES-NI extensions which leads to significally better performance. There is a pretty easy way to determine cipher performance on any particular Linux installation:</p>
+<pre>for i in `ssh -Q cipher`; do dd if=/dev/zero bs=1M count=100 2&gt; /dev/null \
+  | ssh -c $i someuser@localhost "(time -p cat) &gt; /dev/null" 2&gt;&amp;1 \
+  | grep real | awk '{print "'$i': "100 / $2" MB/s" }'; done
+</pre><p>
+The script will only work if someuser has key authentication configured (~/.ssh/config contains a valid entry for <a href="mailto:someuser@localhost">someuser@localhost</a>).</p>
+<p>You can replace both 100 in the above command with 1000 to get a more reliable result but 100MB seems to be a good performance indicator without much variance when checking again.</p>
+<p>A side note - on my proxmox installation I needed to use "host" CPU type to pass AES extensions to the guest machine (while still giving 3 out of 4 cores to the guest VM to keep 1 spare always available). After this change running <code>cat /proc/cpuinfo</code> on the VM shows 3 CPUs with the following flags:<br />
+<code>fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr<br />
+sse sse2 ss syscall nx lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3<br />
+cx16 pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor<br />
+lahf_lm xsaveopt fsgsbase smep erms</code>.</p>
+<p>Thanks to AES extensions now it's obvious that only 2 ciphers are performing really well compared to others, here is a benchmark of ciphers supported by my OpenSSH installation:</p>
+<pre>
+3des-cbc: 21.1864 MB/s
+blowfish-cbc: 80 MB/s
+cast128-cbc: 70.922 MB/s
+arcfour: 208.333 MB/s
+arcfour128: 208.333 MB/s
+arcfour256: 188.679 MB/s
+aes128-cbc: 181.818 MB/s
+aes192-cbc: 172.414 MB/s
+aes256-cbc: 161.29 MB/s
+rijndael-cbc@lysator.liu.se: 161.29 MB/s
+aes128-ctr: 104.167 MB/s
+aes192-ctr: 93.4579 MB/s
+aes256-ctr: 85.4701 MB/s
+aes128-gcm@openssh.com: 370.37 MB/s
+aes256-gcm@openssh.com: 357.143 MB/s
+chacha20-poly1305@openssh.com: 166.667 MB/s
+</pre><p>
+Both <a href="mailto:aes128-gcm@openssh.com">aes128-gcm@openssh.com</a> and <a href="mailto:aes256-gcm@openssh.com">aes256-gcm@openssh.com</a> are leaving competition far behind so now it's time to make ssh actually use AES 256 first if possible. When running man sshd_config it shows the original order of cipher preference (yours can be different):</p>
+<pre>
+aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,
+aes128-gcm@openssh.com,aes256-gcm@openssh.com,
+chacha20-poly1305@openssh.com,
+aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,
+aes256-cbc,arcfour
+</pre><p>
+I trust OpenSSH team the order in terms of security is tuned properly yet AES256 is known to be industry standard cipher and I hope moving <a href="mailto:aes256-gcm@openssh.com">aes256-gcm@openssh.com</a> to the front of the list should be optimal.</p>
+<p>Both sshd_config and ~/.ssh/config configuration files expect lines with supported ciphers:</p>
+<pre>
+# /etc/ssh/ssh_config (or ~/.ssh/config) and sshd_config
+# Protocol version 1
+Cipher aes256-gcm@openssh.com
+# Protocol version 2
+Ciphers aes256-gcm@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-gcm@openssh.com,chacha20-poly1305@openssh.com,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
+</pre><p>
+But before configuring it needs to be tested. I cannot use remote windows scp tools like <a href="https://filezilla-project.org/">FileZilla</a> or <a href="https://winscp.net/eng/index.php">WinSCP</a> as HDD performance will affect results. Eventually I decided that data needs to go between /dev/zero and /dev/null - /dev/urandom has an additional performance hit.</p>
+<p>On a side note, when using WinSCP, make sure to select SCP protocol instead of SFTP (default). Performance difference is huge.</p>
+<p>Before changing any configuration:</p>
+<pre>
+time cat /dev/zero | head -c 1024M | ssh someuser@localhost 'cat &gt;/dev/null'
+
+real    0m10.146s
+user    0m11.457s
+sys     0m2.348s
+</pre><p>
+To test if the result will be different when hardware AES256 cipher will be involved:</p>
+<pre>
+time cat /dev/zero | head -c 1024M | ssh -c aes256-gcm@openssh.com someuser@localhost 'cat &gt;/dev/null'
+
+real    0m3.922s
+user    0m1.718s
+sys     0m1.920s
+</pre><p>
+Whoaa 2.5 times faster - nice. Now after changing sshd_config it should stay that fast by default.</p>
+<pre>
+time cat /dev/zero | head -c 1024M | ssh someuser@localhost 'cat &gt;/dev/null'
+
+real    0m10.294s
+user    0m11.530s
+sys     0m2.195s
+</pre><p>
+No. It's still slow not to mention that lack of HW acceleration means higher CPU usage will prevent other server tasks to run faster...</p>
+<p>So instead I added a line my client configuration in ~/.ssh/config with all supported ciphers but again in the preferred order with <a href="mailto:aes256-gcm@openssh.com">aes256-gcm@openssh.com</a> first:</p>
+<pre>
+real    0m3.790s
+user    0m1.672s
+sys     0m2.019s
+</pre><p>
+It works. </p>
+<p>Of course it works. </p>
+<p>Client configuration determines the order of ciphers to use, not the server - <strike>now to connect with maximum performance every user on every host needs to be configured to pick AES256 by default</strike>.</p>
+<p>When cipher lines are added to /etc/ssh/ssh_config, all ssh connections will use the configured order by default, there is no need to set it per host.</p>
+<p>Result:</p>
+<ol>
+<li>Have faster encrypted file transfers
+</li><li>Won't strain the servers that much with (1)
+</li><li>Have more free time.
+</li></ol>
+<p>It's a definitely win-win.</p>
+</div></div></div><div class="field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="../taxonomy/term/28.html">ssh</a></div><div class="field-item odd"><a href="../taxonomy/term/29.html">linux</a></div><div class="field-item even"><a href="../taxonomy/term/30.html">openssl</a></div><div class="field-item odd"><a href="../taxonomy/term/31.html">aes</a></div></div></div>  </div>
+
+      <footer>
+      <ul class="links inline"><li class="comment_forbidden first last"></li>
+</ul>    </footer>
+  
+    </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+            </div>
+          </section>
+        </div>
+                  <aside id="sidebar" class="col-sm-4" role="complementary">
+           <div class="region region-sidebar-first">
+  <div id="block-menu-menu-menu" class="block block-menu">
+
+        <h2 >Menu</h2>
+    
+  <div class="content">
+    <ul class="menu"><li class="first leaf"><a href="../node.html" title="">Home</a></li>
+<li class="last leaf"><a href="../pl/node/6.html" title="Kalkulator przelewów elixir">Śledź złoty - kiedy dojdzie przelew ?</a></li>
+</ul>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+        <h2 >Contact</h2>
+    
+  <div class="content">
+    <table>
+<tr>
+<td>email:</td>
+<td>turecki<script language="javascript">document.write('@gm');</script>ail.com</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.linkedin.com/in/michal-turecki"><img src="../sites/default/files/linkedin.png"/></a></td>
+</tr>
+</table>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-1" class="block block-block">
+
+      
+  <div class="content">
+    <div style="padding-bottom: 70px">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 160x600, created 9/21/09 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-7061782024161962"
+     data-ad-slot="4289624535"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>  </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+          </aside> 
+              </div>
+    </div>
+  </div>
+
+  
+  
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="fcred col-sm-12">
+          Copyright &copy; 2023 <a href="../node.html">Michał Turecki</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  </body>
+</html>

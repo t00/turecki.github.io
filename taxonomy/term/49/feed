@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - sql-server</title>
+ <link>https://turecki.net/tags/sql-server</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>SQL Server useful but less known features</title>
+ <link>https://turecki.net/content/sql-server-useful-less-known-features</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;h4&gt;Checking who is connected to the database&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;sp_who&lt;br /&gt;
+&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SELECT&lt;br /&gt;
+    NULL as [Connections by Database],&lt;br /&gt;
+    [host_name] AS [Client Machine],&lt;br /&gt;
+    db.name AS [Database],&lt;br /&gt;
+    [program_name] AS [Client Program],&lt;br /&gt;
+    COUNT(*) AS [Open Connections]&lt;br /&gt;
+FROM sys.dm_exec_sessions s (nolock)&lt;br /&gt;
+LEFT JOIN sys.dm_exec_requests r (nolock) ON r.session_id = s.session_id&lt;br /&gt;
+LEFT JOIN sys.databases db (nolock) ON db.database_id = r.database_id&lt;br /&gt;
+WHERE s.session_id &amp;gt;= 50 -- Ignore SQL Server processes&lt;br /&gt;
+GROUP BY [host_name], db.name, [program_name]&lt;br /&gt;
+ORDER BY [Client Machine], [Database], [Client Program]&lt;br /&gt;
+&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Adjusting connection pooling settings&lt;/h4&gt;
+&lt;p&gt;By default pool size is 100 per database with a command timeout (effectively a connection timeout) of 15 seconds. To increase add following to the connection string:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Connection Timeout=30;Pooling=&#039;true&#039;;Max Pool Size=200&lt;/code&gt;
+&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Checking the size of column&#039;s contents&lt;/h4&gt;
+&lt;p&gt;To check how much data the column contains:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SELECT *, DATALENGTH([column]) AS ColumnSizeInBytes FROM table&lt;/code&gt;
+&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Using SQL Server profiler&lt;/h4&gt;
+&lt;p&gt;Profiler is a powerful way to debug application performance problems, to check query execution time. If you&#039;re developing any application using SQL Server as a database, running it at least once for every application release can help with pinpointing possible performance issues. Remember the rule - &lt;em&gt;there should be a constant number of queries regardless of the amount of records fetched&lt;/em&gt; - that way application will scale better. Sometimes it&#039;s better to replace a single complex query with more simpler queries because for each result row, columns shared by joins are repeated and delivered to client for processing many times.
+&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql&quot;&gt;SQL&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/databases&quot;&gt;databases&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql-server&quot;&gt;sql-server&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 02 Nov 2016 11:43:56 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">39 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/sql-server-useful-less-known-features#comments</comments>
+</item>
+<item>
+ <title>How to save data from all tables in SQL Server database into CSV files (using PowerShell)</title>
+ <link>https://turecki.net/content/how-save-data-all-tables-sql-server-database-csv-files-using-powershell</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;All it takes is to create the following PowerShell script (text file with .ps1 extension) and changing $server and $db variables to match the server&#039;s host and instance name (SERVER\INSTANCE) and a database name.&lt;/p&gt;
+&lt;pre&gt;
+$destDir = Get-Location
+$server = &quot;localhost&quot;
+$db = &quot;DatabaseToExport&quot;
+
+Import-Module -Name SQLPS
+$tables = Invoke-Sqlcmd -query &quot;SELECT name FROM sys.tables&quot; -Database &quot;$db&quot; -ServerInstance &quot;$server&quot;
+foreach ($table in $tables)
+{
+	$tableName = $table[&quot;name&quot;]
+	write-host -ForegroundColor Green &quot;Creating File $tableName.csv&quot;
+	Invoke-Sqlcmd -Query &quot;SELECT * FROM $tableName;&quot; -Database &quot;$db&quot; -Server &quot;$server&quot; |
+		Export-Csv -NoTypeInformation -Path &quot;$destDir\$tableName.csv&quot; -Encoding UTF8
+}
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/powershell&quot;&gt;powershell&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql-server&quot;&gt;sql-server&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/database&quot;&gt;database&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/csv&quot;&gt;csv&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 23 Sep 2015 09:24:44 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">28 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/how-save-data-all-tables-sql-server-database-csv-files-using-powershell#comments</comments>
+</item>
+</channel>
+</rss>

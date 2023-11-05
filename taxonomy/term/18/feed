@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - svn</title>
+ <link>https://turecki.net/tags/svn</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Applying SVN patch diff file to a GIT repository</title>
+ <link>https://turecki.net/content/applying-svn-patch-diff-file-git-repository</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;There are many FOSS projects using subversion for source control. I&#039;m using GIT instead because or a unique mixture of features it has and a widespread use of GIT in FOSS community including legendary GitHub. Subversion is much less flexible and is worse performing regardless of popular opinions based mostly on better familiarity with it without &quot;big picture&quot; comparison. Major reason for my personal dislike of SVN is inability to browse the history of a repository without having an established network connection to the subversion repository server.&lt;/p&gt;
+&lt;p&gt;That&#039;s why I&#039;m maintaining a refactored fork of &lt;a href=&quot;http://safeexambrowser.org&quot;&gt;Safe Exam Browser&lt;/a&gt; on GitHub (although recently SEB team switched to git so it&#039;s just a one time catch up). Before a move to git I needed to convert SVN commits to GIT and even with tools like TortoiseGIT and TortoiseSVN it seems not to be a trivial task.&lt;/p&gt;
+&lt;p&gt;TortoiseSVN on &quot;Show Log&quot; can generate a diff patch when we select 1 commit or a continuous range of commits, using context menu&#039;s &quot;Show changes as united diff&quot; option. This is roughly equivalent to running:&lt;/p&gt;
+&lt;pre&gt;
+git diff --revision X:Y
+&lt;/pre&gt;&lt;p&gt;
+NOTICE: In TortoiseSVN 1.8.11 when creating a diff for multiple commits I needed to select 1 commit before the first commit I wanted to include in diff. What&#039;s interestng is that list of changed files included this &quot;before-first&quot; commit&#039;s contents but diff did not.&lt;/p&gt;
+&lt;p&gt;But this file is not compatibile with git am patching as it is in different format, when running &quot;Apply patch&quot; feature in TortoiseGit we get the following error:&lt;/p&gt;
+&lt;pre&gt;
+git.exe am --3way --ignore-space-change --keep-cr &quot;path_to_diff_file&quot;
+Patch format detection failed.
+
+Fail
+&lt;/pre&gt;&lt;p&gt;
+There is an alternative git command git apply but it also fails if there is at least a single mismatch in the diff file against the codebase it is executed against.&lt;/p&gt;
+&lt;p&gt;It returned many errors like:&lt;/p&gt;
+&lt;p&gt;X:line: trailing whitespace.&lt;/p&gt;
+&lt;p&gt;error: file_name: does not exist in index. (git apply ignored first part of the diff file path on my windows machine)&lt;/p&gt;
+&lt;p&gt;error: file_name: patch does not apply (newlines + conflicting changes issue)&lt;/p&gt;
+&lt;p&gt;error: repository lacks the necessary blob to fall back on 3-way merge. (because I used -3 parameter to enable 3-way merge).&lt;/p&gt;
+&lt;p&gt;The solution is to use patch command with some possible options letting the user to fine tune the patching process. In my case I modified the original code extensively so setting +/- 100 lines with -F option when finding original code was a must. Also windows line endings were used in the project so --binary option allowed to prevent patching from changing all line endings in files being patched. Line endings should be also ignored when searching for patched code so -l option is used. Overall the patching for every contiguous set of SVN commits I chose to become a single GIT commit is done using the following command:&lt;/p&gt;
+&lt;pre&gt;
+patch -F 100 -l --binary --no-backup-if-mismatch -p0 &amp;lt; c:/patches/1.diff
+&lt;/pre&gt;&lt;p&gt;
+After running the command and (optionally) pointing the new locations of some files moved, there can be some reject files (*.rej) left in the source control which will contain patches which could not be applied. After manual applying I usually copy original commit texts, revisions and authors using &quot;Copy to clipboard&quot; feature of TortoiseSVN log and commit to Git. Job done.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/git&quot;&gt;git&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/svn&quot;&gt;svn&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/patch&quot;&gt;patch&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/diff&quot;&gt;diff&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/subversion&quot;&gt;subversion&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Mon, 07 Sep 2015 09:54:40 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">26 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/applying-svn-patch-diff-file-git-repository#comments</comments>
+</item>
+</channel>
+</rss>

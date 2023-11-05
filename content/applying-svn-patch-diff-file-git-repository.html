@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="../node/26.html" />
+<link rel="shortlink" href="../node/26.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="shortcut icon" href="../sites/all/themes/nexus/favicon.ico" type="image/vnd.microsoft.icon" />
+<title>Applying SVN patch diff file to a GIT repository | Michał Turecki</title>
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_srkZYgj6sRCmlRFbg8RXZZwmQlPsaT26X9fTuwxh_UE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_Y5uCOCfOAkjUfMmBhpaWVcM3oH3I5BZx329toWp0ukA.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_5aQvY9eDN5XIiayMtb_05FejVu1px73z0dS0wFjNJKo.css" media="all" />
+<script type="text/javascript" src="../sites/default/files/js/js_QwNzQiXbTATgX0M-_QL1qnwVy0bhzhL0wFmwNDj-VCg.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_j5mWRs_KOxlU6vD_LGLwhVkufrLTlEWol4E0UDyFzd4.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_ZPMVUwauT3CzfUSIYk-Kc3nwhp80i90VcKjYuHm5owQ.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_38dYfT5tBcNRDpGLvmZst3EvwIKHRrNMAUPl_CmZHoU.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","setHasJsCookie":0,"ajaxPageState":{"theme":"nexus","theme_token":"qBNGuFS60xeLzA6aS5JWVdNJJhTCMs2-zqjESGi-EGc","js":{"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.11\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/prettify\/src\/prettify.js":1,"sites\/all\/libraries\/prettify\/src\/lang-css.js":1,"sites\/all\/libraries\/prettify\/src\/lang-sql.js":1,"sites\/all\/modules\/prettify\/prettify.loader.js":1,"sites\/all\/themes\/nexus\/js\/bootstrap.min.js":1,"sites\/all\/themes\/nexus\/js\/superfish.js":1,"sites\/all\/themes\/nexus\/js\/mobilemenu.js":1,"sites\/all\/themes\/nexus\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/aggregator\/aggregator.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/poll\/poll.css":1,"modules\/user\/user.css":1,"modules\/forum\/forum.css":1,"sites\/all\/themes\/nexus\/css\/bootstrap.min.css":1,"sites\/all\/themes\/nexus\/css\/flexslider.css":1,"sites\/all\/themes\/nexus\/style.css":1,"sites\/all\/modules\/prettify\/styles\/stackoverflow.css":1}},"prettify":{"linenums":false,"match":".content","nocode":"no-code","custom":[],"markup":{"code":true,"pre":true,"precode":false}}});
+//--><!]]>
+</script>
+<!--[if lt IE 9]><script src="/sites/all/themes/nexus/js/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-first page-node page-node- page-node-26 node-type-story">
+    <div id="page">
+  <header id="masthead" class="site-header container" role="banner">
+    <div class="row">
+      <div id="logo" class="site-branding col-sm-6">
+                <h1 id="site-title">
+          <a href="../node.html" title="Home">Michał Turecki</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mainmenu">
+        <div class="mobilenavi"></div>
+        <nav id="navigation" role="navigation">
+          <div id="main-menu">
+                      </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+  
+  
+  
+    <div id="main-content">
+    <div class="container"> 
+      <div class="row">
+                <div id="primary" class="content-area col-sm-8">
+          <section id="content" role="main" class="clearfix">
+            <div id="breadcrumbs"><h2 class="element-invisible">You are here</h2><nav class="breadcrumb"><a href="../node.html">Home</a> » Applying SVN patch diff file to a GIT repository</nav></div>                                    <div id="content-wrap">
+                            <h1 class="page-title">Applying SVN patch diff file to a GIT repository</h1>                                                                      <div class="region region-content">
+  <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+                          
+              <ul class="meta clearfix">
+          <li><strong>Posted on:</strong> 7 September 2015</li>
+          <li><strong>By:</strong> <span class="username">Michał Turecki</span></li>   
+        </ul>
+      
+    
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even"><p>There are many FOSS projects using subversion for source control. I'm using GIT instead because or a unique mixture of features it has and a widespread use of GIT in FOSS community including legendary GitHub. Subversion is much less flexible and is worse performing regardless of popular opinions based mostly on better familiarity with it without "big picture" comparison. Major reason for my personal dislike of SVN is inability to browse the history of a repository without having an established network connection to the subversion repository server.</p>
+<p>That's why I'm maintaining a refactored fork of <a href="http://safeexambrowser.org">Safe Exam Browser</a> on GitHub (although recently SEB team switched to git so it's just a one time catch up). Before a move to git I needed to convert SVN commits to GIT and even with tools like TortoiseGIT and TortoiseSVN it seems not to be a trivial task.</p>
+<p>TortoiseSVN on "Show Log" can generate a diff patch when we select 1 commit or a continuous range of commits, using context menu's "Show changes as united diff" option. This is roughly equivalent to running:</p>
+<pre>
+git diff --revision X:Y
+</pre><p>
+NOTICE: In TortoiseSVN 1.8.11 when creating a diff for multiple commits I needed to select 1 commit before the first commit I wanted to include in diff. What's interestng is that list of changed files included this "before-first" commit's contents but diff did not.</p>
+<p>But this file is not compatibile with git am patching as it is in different format, when running "Apply patch" feature in TortoiseGit we get the following error:</p>
+<pre>
+git.exe am --3way --ignore-space-change --keep-cr "path_to_diff_file"
+Patch format detection failed.
+
+Fail
+</pre><p>
+There is an alternative git command git apply but it also fails if there is at least a single mismatch in the diff file against the codebase it is executed against.</p>
+<p>It returned many errors like:</p>
+<p>X:line: trailing whitespace.</p>
+<p>error: file_name: does not exist in index. (git apply ignored first part of the diff file path on my windows machine)</p>
+<p>error: file_name: patch does not apply (newlines + conflicting changes issue)</p>
+<p>error: repository lacks the necessary blob to fall back on 3-way merge. (because I used -3 parameter to enable 3-way merge).</p>
+<p>The solution is to use patch command with some possible options letting the user to fine tune the patching process. In my case I modified the original code extensively so setting +/- 100 lines with -F option when finding original code was a must. Also windows line endings were used in the project so --binary option allowed to prevent patching from changing all line endings in files being patched. Line endings should be also ignored when searching for patched code so -l option is used. Overall the patching for every contiguous set of SVN commits I chose to become a single GIT commit is done using the following command:</p>
+<pre>
+patch -F 100 -l --binary --no-backup-if-mismatch -p0 &lt; c:/patches/1.diff
+</pre><p>
+After running the command and (optionally) pointing the new locations of some files moved, there can be some reject files (*.rej) left in the source control which will contain patches which could not be applied. After manual applying I usually copy original commit texts, revisions and authors using "Copy to clipboard" feature of TortoiseSVN log and commit to Git. Job done.</p>
+</div></div></div><div class="field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="../taxonomy/term/17.html">git</a></div><div class="field-item odd"><a href="../taxonomy/term/18.html">svn</a></div><div class="field-item even"><a href="../taxonomy/term/32.html">patch</a></div><div class="field-item odd"><a href="../taxonomy/term/33.html">diff</a></div><div class="field-item even"><a href="../taxonomy/term/34.html">subversion</a></div></div></div>  </div>
+
+      <footer>
+      <ul class="links inline"><li class="comment_forbidden first last"></li>
+</ul>    </footer>
+  
+    </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+            </div>
+          </section>
+        </div>
+                  <aside id="sidebar" class="col-sm-4" role="complementary">
+           <div class="region region-sidebar-first">
+  <div id="block-menu-menu-menu" class="block block-menu">
+
+        <h2 >Menu</h2>
+    
+  <div class="content">
+    <ul class="menu"><li class="first leaf"><a href="../node.html" title="">Home</a></li>
+<li class="last leaf"><a href="../pl/node/6.html" title="Kalkulator przelewów elixir">Śledź złoty - kiedy dojdzie przelew ?</a></li>
+</ul>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+        <h2 >Contact</h2>
+    
+  <div class="content">
+    <table>
+<tr>
+<td>email:</td>
+<td>turecki<script language="javascript">document.write('@gm');</script>ail.com</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.linkedin.com/in/michal-turecki"><img src="../sites/default/files/linkedin.png"/></a></td>
+</tr>
+</table>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-1" class="block block-block">
+
+      
+  <div class="content">
+    <div style="padding-bottom: 70px">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 160x600, created 9/21/09 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-7061782024161962"
+     data-ad-slot="4289624535"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>  </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+          </aside> 
+              </div>
+    </div>
+  </div>
+
+  
+  
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="fcred col-sm-12">
+          Copyright &copy; 2023 <a href="../node.html">Michał Turecki</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  </body>
+</html>

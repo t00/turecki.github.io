@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - electronics</title>
+ <link>https://turecki.net/tags/electronics</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Reasons why PS4 breaks and how to fix it</title>
+ <link>https://turecki.net/content/reasons-why-ps4-breaks-and-how-fix-it</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Recently I received my PS4 which I sniped on &lt;a href=&quot;http://www.ebay.co.uk&quot;&gt;eBay&lt;/a&gt; as being for spares and repair. Sometimes, just sometimes spares means power cable is not working due to a blown fuse or there is a software failure which after hard reset returns back to life.&lt;/p&gt;
+&lt;p&gt;Not this time.&lt;/p&gt;
+&lt;p&gt;It&#039;s apparently a &quot;blue light of death&quot; issue. And from what there is said and shown on the vast number of Internet resources there can be many reasons for this problem including HDMI chip failure, APU chip (not always permanent) failure due to overheating, power supply unit and others.&lt;/p&gt;
+&lt;p&gt;One is HDMI output failure - this can be due to HDMI port as well as broken HDMI chip MN86471A. If PS4 starts it can also be TV handshake compatibility problem - in this case HDMI splitter will help (just not the cheapest one as these tend to produce noise).&lt;/p&gt;
+&lt;p&gt;Another issue can be a power supply unit. I hoped that this is the case and waited over 2 weeks for a replacement refurbished original Sony unit I bought on &lt;a href=&quot;http://www.aliexpress.com&quot;&gt;AliExpress&lt;/a&gt;. When it arrived instead of installing it straight away, ignoring the warranty sticker and consequences of not being able to send it back to China for more money it costed me to buy it inclusive postage, I opened it. With my &lt;a href=&quot;http://www.maplin.co.uk/p/usb-digital-microscope-with-400x-magnification-n43hh&quot;&gt;toy microscope&lt;/a&gt; for grown ups I managed to find traces of cotton used to clean flux from repair. All around &lt;a href=&quot;http://www.datasheetcatalog.com/datasheets_pdf/D/N/P/0/DNP015.shtml&quot;&gt;DNP015&lt;/a&gt; chip - a Green Mode Fairchild Power Switch. After some googling it became obvious this chip was a problem. Moreover I can fix the original supply by just replacing it with a new one.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/sites/default/files/images/151014205227159817096.jpg&quot;&gt;chip&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205417159927030.jpg&quot;&gt;board 1&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205440159949884.jpg&quot;&gt;board 2&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205456159966342.jpg&quot;&gt;board 3&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Not so easy.&lt;/p&gt;
+&lt;p&gt;PS4 still won&#039;t start and symptoms are identical for both units. After some more searching and comparing my symptoms (power on - 1-2 seconds of power - beeps - shuts off again) it is most probably that APU is to blame. I found out that changing PS4 position when starting (BluRay down for example) or pressing on the bottom side of PS4 when starting can help to force it to start. In my case it did - but obviously it&#039;s not a permanent solution. &lt;/p&gt;
+&lt;p&gt;Unfortunately this PS4 seems to run hot and after about 30 minutes it shuts down again. Thermal paste or pads will need to be replaced during... what&#039;s next in turn for servicing: reworking or reballing.&lt;/p&gt;
+&lt;p&gt;Although reballing &lt;a href=&quot;https://www.youtube.com/watch?v=1AcEt073Uds&quot;&gt;is considered a bullshit by some&lt;/a&gt;, and reworking being just a side effect of reballing, it&#039;s always worth a try. With a new &lt;a href=&quot;https://www.youtube.com/watch?v=SslTa2B3mUg&quot;&gt;hot air rework station (Atten 898D)&lt;/a&gt; I received this week I will try to apply a temporary fix (reworking by applying around 120°C hot air for 5 minutes) before doing a proper reballing using stencils and solder balls which will also arrive just arrived from China.&lt;/p&gt;
+&lt;p&gt;I don&#039;t have really high hopes though and I will keep updating this post.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/electronics&quot;&gt;electronics&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/fix&quot;&gt;fix&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/hardware&quot;&gt;hardware&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Fri, 23 Oct 2015 20:48:23 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">31 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/reasons-why-ps4-breaks-and-how-fix-it#comments</comments>
+</item>
+</channel>
+</rss>

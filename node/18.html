@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="18.html" />
+<link rel="shortlink" href="18.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="shortcut icon" href="../sites/all/themes/nexus/favicon.ico" type="image/vnd.microsoft.icon" />
+<title>Delphi 2007 - error running on 64-bit Windows | Michał Turecki</title>
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_srkZYgj6sRCmlRFbg8RXZZwmQlPsaT26X9fTuwxh_UE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_Y5uCOCfOAkjUfMmBhpaWVcM3oH3I5BZx329toWp0ukA.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_5aQvY9eDN5XIiayMtb_05FejVu1px73z0dS0wFjNJKo.css" media="all" />
+<script type="text/javascript" src="../sites/default/files/js/js_QwNzQiXbTATgX0M-_QL1qnwVy0bhzhL0wFmwNDj-VCg.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_j5mWRs_KOxlU6vD_LGLwhVkufrLTlEWol4E0UDyFzd4.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_20V_0CM-dgsXYQ7J7r5DJ9SSnFztJveRdl9aj2_YRME.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_38dYfT5tBcNRDpGLvmZst3EvwIKHRrNMAUPl_CmZHoU.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","setHasJsCookie":0,"ajaxPageState":{"theme":"nexus","theme_token":"vWkJcFU0KeN0GIpVsWelyHP_s8D11Kv_albf3f9-G_w","js":{"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.11\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/prettify\/src\/prettify.js":1,"sites\/all\/libraries\/prettify\/src\/lang-css.js":1,"sites\/all\/libraries\/prettify\/src\/lang-sql.js":1,"sites\/all\/modules\/prettify\/prettify.loader.js":1,"misc\/tableheader.js":1,"sites\/all\/themes\/nexus\/js\/bootstrap.min.js":1,"sites\/all\/themes\/nexus\/js\/superfish.js":1,"sites\/all\/themes\/nexus\/js\/mobilemenu.js":1,"sites\/all\/themes\/nexus\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/aggregator\/aggregator.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/poll\/poll.css":1,"modules\/user\/user.css":1,"modules\/forum\/forum.css":1,"sites\/all\/themes\/nexus\/css\/bootstrap.min.css":1,"sites\/all\/themes\/nexus\/css\/flexslider.css":1,"sites\/all\/themes\/nexus\/style.css":1,"sites\/all\/modules\/prettify\/styles\/stackoverflow.css":1}},"prettify":{"linenums":false,"match":".content","nocode":"no-code","custom":[],"markup":{"code":true,"pre":true,"precode":false}}});
+//--><!]]>
+</script>
+<!--[if lt IE 9]><script src="/sites/all/themes/nexus/js/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-first page-node page-node- page-node-18 node-type-story">
+    <div id="page">
+  <header id="masthead" class="site-header container" role="banner">
+    <div class="row">
+      <div id="logo" class="site-branding col-sm-6">
+                <h1 id="site-title">
+          <a href="../node.html" title="Home">Michał Turecki</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mainmenu">
+        <div class="mobilenavi"></div>
+        <nav id="navigation" role="navigation">
+          <div id="main-menu">
+                      </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+  
+  
+  
+    <div id="main-content">
+    <div class="container"> 
+      <div class="row">
+                <div id="primary" class="content-area col-sm-8">
+          <section id="content" role="main" class="clearfix">
+            <div id="breadcrumbs"><h2 class="element-invisible">You are here</h2><nav class="breadcrumb"><a href="../node.html">Home</a> » Delphi 2007 - error running on 64-bit Windows</nav></div>                                    <div id="content-wrap">
+                            <h1 class="page-title">Delphi 2007 - error running on 64-bit Windows</h1>                                                                      <div class="region region-content">
+  <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+                          
+              <ul class="meta clearfix">
+          <li><strong>Posted on:</strong> 3 April 2013</li>
+          <li><strong>By:</strong> <span class="username">Michał Turecki</span></li>   
+        </ul>
+      
+    
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even"><p>Delphi 2007 is not new although it is the last non-unicode release of Delphi hence it is used frequently to maintain legacy code base.</p>
+<p>And it has bugs. Some of them can be fixed by <a href="http://andy.jgknet.de/blog/bugfix-units/vclfixpack-10/">VCLFixPack</a> and affect only compiled binaries.</p>
+<p>Some are related to IDE and neither <a href="http://www.cnpack.org/">CnPack</a> nor <a href="http://www.gexperts.org/">GExperts</a> IDE extensions can fix them.</p>
+<p>One of such bugs is related to debugging on 64-bit Windows. The problem is that after debugging session has ended, following error appears:</p>
+<pre>Assertion failure: "(!"SetThreadContext failed")" 
+in ..\win32src\thread32.cpp at line 412 
+Continue execution?</pre><p>
+The error was thrown by bordbk105N.dll and it was discussed <a href="http://www.monien.net/delphi-2009-windows-7-64-bit-debugger-crash-workaround">here (1)</a> and <a href="http://anotherlab.rajapet.net/2009/08/work-around-for-delphi-20072009-with.html">here (2)</a>.</p>
+<p>Unfortunately in (1) original URL has changed and (2) download links are dead so I attached a fix below as there's never enough of mirroring of the Internet. The executable is a patch tool which needs to be started as Administrator. It will modify bordbk105N.dll and fix the problem.</p>
+</div></div></div><div class="field field-name-upload field-type-file field-label-hidden"><div class="field-items"><div class="field-item even"><table class="sticky-enabled">
+ <thead><tr><th>Attachment</th><th>Size</th> </tr></thead>
+<tbody>
+ <tr class="odd"><td><span class="file"><img class="file-icon" alt="File" title="application/x-msdos-program" src="../modules/file/icons/application-octet-stream.png" /> <a href="../sites/default/files/Delphi_2007_2009_WOW64_Debugger_Fix.exe" type="application/x-msdos-program; length=180224" title="Delphi_2007_2009_WOW64_Debugger_Fix.exe">Delphi_2007_2009_WOW64_Debugger_Fix.exe</a></span></td><td>176 KB</td> </tr>
+</tbody>
+</table>
+</div></div></div><div class="field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="../taxonomy/term/2.html">delphi</a></div><div class="field-item odd"><a href="../taxonomy/term/4.html">programming</a></div><div class="field-item even"><a href="../taxonomy/term/56.html">bug</a></div><div class="field-item odd"><a href="../taxonomy/term/1.html">download</a></div></div></div>  </div>
+
+      <footer>
+      <ul class="links inline"><li class="comment_forbidden first last"></li>
+</ul>    </footer>
+  
+    </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+            </div>
+          </section>
+        </div>
+                  <aside id="sidebar" class="col-sm-4" role="complementary">
+           <div class="region region-sidebar-first">
+  <div id="block-menu-menu-menu" class="block block-menu">
+
+        <h2 >Menu</h2>
+    
+  <div class="content">
+    <ul class="menu"><li class="first leaf"><a href="../node.html" title="">Home</a></li>
+<li class="last leaf"><a href="../pl/node/6.html" title="Kalkulator przelewów elixir">Śledź złoty - kiedy dojdzie przelew ?</a></li>
+</ul>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+        <h2 >Contact</h2>
+    
+  <div class="content">
+    <table>
+<tr>
+<td>email:</td>
+<td>turecki<script language="javascript">document.write('@gm');</script>ail.com</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.linkedin.com/in/michal-turecki"><img src="../sites/default/files/linkedin.png"/></a></td>
+</tr>
+</table>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-1" class="block block-block">
+
+      
+  <div class="content">
+    <div style="padding-bottom: 70px">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 160x600, created 9/21/09 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-7061782024161962"
+     data-ad-slot="4289624535"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>  </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+          </aside> 
+              </div>
+    </div>
+  </div>
+
+  
+  
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="fcred col-sm-12">
+          Copyright &copy; 2023 <a href="../node.html">Michał Turecki</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  </body>
+</html>

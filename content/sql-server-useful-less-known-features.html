@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="../node/39.html" />
+<link rel="shortlink" href="../node/39.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="shortcut icon" href="../sites/all/themes/nexus/favicon.ico" type="image/vnd.microsoft.icon" />
+<title>SQL Server useful but less known features | Michał Turecki</title>
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_srkZYgj6sRCmlRFbg8RXZZwmQlPsaT26X9fTuwxh_UE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_Y5uCOCfOAkjUfMmBhpaWVcM3oH3I5BZx329toWp0ukA.css" media="all" />
+<link type="text/css" rel="stylesheet" href="../sites/default/files/css/css_5aQvY9eDN5XIiayMtb_05FejVu1px73z0dS0wFjNJKo.css" media="all" />
+<script type="text/javascript" src="../sites/default/files/js/js_QwNzQiXbTATgX0M-_QL1qnwVy0bhzhL0wFmwNDj-VCg.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_j5mWRs_KOxlU6vD_LGLwhVkufrLTlEWol4E0UDyFzd4.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_ZPMVUwauT3CzfUSIYk-Kc3nwhp80i90VcKjYuHm5owQ.js"></script>
+<script type="text/javascript" src="../sites/default/files/js/js_38dYfT5tBcNRDpGLvmZst3EvwIKHRrNMAUPl_CmZHoU.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","setHasJsCookie":0,"ajaxPageState":{"theme":"nexus","theme_token":"nbXbQGU9_-hsJLu9omRH56J5Dwqm0ppZdo2iJDFH7MA","js":{"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.11\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/prettify\/src\/prettify.js":1,"sites\/all\/libraries\/prettify\/src\/lang-css.js":1,"sites\/all\/libraries\/prettify\/src\/lang-sql.js":1,"sites\/all\/modules\/prettify\/prettify.loader.js":1,"sites\/all\/themes\/nexus\/js\/bootstrap.min.js":1,"sites\/all\/themes\/nexus\/js\/superfish.js":1,"sites\/all\/themes\/nexus\/js\/mobilemenu.js":1,"sites\/all\/themes\/nexus\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/aggregator\/aggregator.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/poll\/poll.css":1,"modules\/user\/user.css":1,"modules\/forum\/forum.css":1,"sites\/all\/themes\/nexus\/css\/bootstrap.min.css":1,"sites\/all\/themes\/nexus\/css\/flexslider.css":1,"sites\/all\/themes\/nexus\/style.css":1,"sites\/all\/modules\/prettify\/styles\/stackoverflow.css":1}},"prettify":{"linenums":false,"match":".content","nocode":"no-code","custom":[],"markup":{"code":true,"pre":true,"precode":false}}});
+//--><!]]>
+</script>
+<!--[if lt IE 9]><script src="/sites/all/themes/nexus/js/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-first page-node page-node- page-node-39 node-type-story">
+    <div id="page">
+  <header id="masthead" class="site-header container" role="banner">
+    <div class="row">
+      <div id="logo" class="site-branding col-sm-6">
+                <h1 id="site-title">
+          <a href="../node.html" title="Home">Michał Turecki</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mainmenu">
+        <div class="mobilenavi"></div>
+        <nav id="navigation" role="navigation">
+          <div id="main-menu">
+                      </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+  
+  
+  
+    <div id="main-content">
+    <div class="container"> 
+      <div class="row">
+                <div id="primary" class="content-area col-sm-8">
+          <section id="content" role="main" class="clearfix">
+            <div id="breadcrumbs"><h2 class="element-invisible">You are here</h2><nav class="breadcrumb"><a href="../node.html">Home</a> » SQL Server useful but less known features</nav></div>                                    <div id="content-wrap">
+                            <h1 class="page-title">SQL Server useful but less known features</h1>                                                                      <div class="region region-content">
+  <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+                          
+              <ul class="meta clearfix">
+          <li><strong>Posted on:</strong> 2 November 2016</li>
+          <li><strong>By:</strong> <span class="username">Michał Turecki</span></li>   
+        </ul>
+      
+    
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even"><ol>
+<li>
+<h4>Checking who is connected to the database</h4>
+<p><code>sp_who<br />
+</code></p>
+<p><code>SELECT<br />
+    NULL as [Connections by Database],<br />
+    [host_name] AS [Client Machine],<br />
+    db.name AS [Database],<br />
+    [program_name] AS [Client Program],<br />
+    COUNT(*) AS [Open Connections]<br />
+FROM sys.dm_exec_sessions s (nolock)<br />
+LEFT JOIN sys.dm_exec_requests r (nolock) ON r.session_id = s.session_id<br />
+LEFT JOIN sys.databases db (nolock) ON db.database_id = r.database_id<br />
+WHERE s.session_id &gt;= 50 -- Ignore SQL Server processes<br />
+GROUP BY [host_name], db.name, [program_name]<br />
+ORDER BY [Client Machine], [Database], [Client Program]<br />
+</code></p>
+</li>
+<li>
+<h4>Adjusting connection pooling settings</h4>
+<p>By default pool size is 100 per database with a command timeout (effectively a connection timeout) of 15 seconds. To increase add following to the connection string:</p>
+<p><code>Connection Timeout=30;Pooling='true';Max Pool Size=200</code>
+</p></li>
+<li>
+<h4>Checking the size of column's contents</h4>
+<p>To check how much data the column contains:</p>
+<p><code>SELECT *, DATALENGTH([column]) AS ColumnSizeInBytes FROM table</code>
+</p></li>
+<li>
+<h4>Using SQL Server profiler</h4>
+<p>Profiler is a powerful way to debug application performance problems, to check query execution time. If you're developing any application using SQL Server as a database, running it at least once for every application release can help with pinpointing possible performance issues. Remember the rule - <em>there should be a constant number of queries regardless of the amount of records fetched</em> - that way application will scale better. Sometimes it's better to replace a single complex query with more simpler queries because for each result row, columns shared by joins are repeated and delivered to client for processing many times.
+</p></li>
+</ol>
+</div></div></div><div class="field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="../taxonomy/term/4.html">programming</a></div><div class="field-item odd"><a href="../taxonomy/term/70.html">SQL</a></div><div class="field-item even"><a href="../taxonomy/term/71.html">databases</a></div><div class="field-item odd"><a href="../taxonomy/term/49.html">sql-server</a></div></div></div>  </div>
+
+      <footer>
+      <ul class="links inline"><li class="comment_forbidden first last"></li>
+</ul>    </footer>
+  
+    </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+            </div>
+          </section>
+        </div>
+                  <aside id="sidebar" class="col-sm-4" role="complementary">
+           <div class="region region-sidebar-first">
+  <div id="block-menu-menu-menu" class="block block-menu">
+
+        <h2 >Menu</h2>
+    
+  <div class="content">
+    <ul class="menu"><li class="first leaf"><a href="../node.html" title="">Home</a></li>
+<li class="last leaf"><a href="../pl/node/6.html" title="Kalkulator przelewów elixir">Śledź złoty - kiedy dojdzie przelew ?</a></li>
+</ul>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+        <h2 >Contact</h2>
+    
+  <div class="content">
+    <table>
+<tr>
+<td>email:</td>
+<td>turecki<script language="javascript">document.write('@gm');</script>ail.com</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.linkedin.com/in/michal-turecki"><img src="../sites/default/files/linkedin.png"/></a></td>
+</tr>
+</table>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-1" class="block block-block">
+
+      
+  <div class="content">
+    <div style="padding-bottom: 70px">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 160x600, created 9/21/09 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-7061782024161962"
+     data-ad-slot="4289624535"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>  </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+          </aside> 
+              </div>
+    </div>
+  </div>
+
+  
+  
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="fcred col-sm-12">
+          Copyright &copy; 2023 <a href="../node.html">Michał Turecki</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  </body>
+</html>

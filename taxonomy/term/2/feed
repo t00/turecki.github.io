@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - delphi</title>
+ <link>https://turecki.net/tags/delphi</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Delphi 2007 - error running on 64-bit Windows</title>
+ <link>https://turecki.net/delphi-2007-on-64bit-windows</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Delphi 2007 is not new although it is the last non-unicode release of Delphi hence it is used frequently to maintain legacy code base.&lt;/p&gt;
+&lt;p&gt;And it has bugs. Some of them can be fixed by &lt;a href=&quot;http://andy.jgknet.de/blog/bugfix-units/vclfixpack-10/&quot;&gt;VCLFixPack&lt;/a&gt; and affect only compiled binaries.&lt;/p&gt;
+&lt;p&gt;Some are related to IDE and neither &lt;a href=&quot;http://www.cnpack.org/&quot;&gt;CnPack&lt;/a&gt; nor &lt;a href=&quot;http://www.gexperts.org/&quot;&gt;GExperts&lt;/a&gt; IDE extensions can fix them.&lt;/p&gt;
+&lt;p&gt;One of such bugs is related to debugging on 64-bit Windows. The problem is that after debugging session has ended, following error appears:&lt;/p&gt;
+&lt;pre&gt;Assertion failure: &quot;(!&quot;SetThreadContext failed&quot;)&quot; 
+in ..\win32src\thread32.cpp at line 412 
+Continue execution?&lt;/pre&gt;&lt;p&gt;
+The error was thrown by bordbk105N.dll and it was discussed &lt;a href=&quot;http://www.monien.net/delphi-2009-windows-7-64-bit-debugger-crash-workaround&quot;&gt;here (1)&lt;/a&gt; and &lt;a href=&quot;http://anotherlab.rajapet.net/2009/08/work-around-for-delphi-20072009-with.html&quot;&gt;here (2)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Unfortunately in (1) original URL has changed and (2) download links are dead so I attached a fix below as there&#039;s never enough of mirroring of the Internet. The executable is a patch tool which needs to be started as Administrator. It will modify bordbk105N.dll and fix the problem.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-msdos-program&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/Delphi_2007_2009_WOW64_Debugger_Fix.exe&quot; type=&quot;application/x-msdos-program; length=180224&quot; title=&quot;Delphi_2007_2009_WOW64_Debugger_Fix.exe&quot;&gt;Delphi_2007_2009_WOW64_Debugger_Fix.exe&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;176 KB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/delphi&quot;&gt;delphi&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/bug&quot;&gt;bug&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 03 Apr 2013 08:40:53 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">18 at https://turecki.net</guid>
+ <comments>https://turecki.net/delphi-2007-on-64bit-windows#comments</comments>
+</item>
+<item>
+ <title>Simple themed TCheckComboBox control for Delphi - TComboBox with checkboxes</title>
+ <link>https://turecki.net/content/simple-themed-tcheckcombobox-control-delphi-tcombobox-checkboxes</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Recently I needed to upgrade a piece of software to do some things easily done in modern user interface libraries say WPF or FireMonkey (which I don&#039;t use personally), but requiring more effort to implement in Delphi VCL.&lt;/p&gt;
+&lt;p&gt;  The task in question was to add a drop down menu with TCheckBox controls to a TStringGrid. This has been done countless times and TCheckedComboBox, TCheckBoxComboBox and others alike can be found on the Internet easily. The problem is none have the features I needed:&lt;/p&gt;
+&lt;p&gt;- separate Items and Values where Values can optionally be presented to a user instead of Items&lt;br /&gt;
+  - custom aggregation of values depending on user selection - checking checkboxes should trigger the event which will return a text calculated based on selections and custom algorithm, which can be say: sum all values of selected items, take maximum, average etc.&lt;br /&gt;
+  - optionally for ease of use, it should contain bitmask aggregation mode - where value can be set and retrieved by simply assigning to a string representation of integer and appropriate checked items will be translated to bit weights of items&lt;br /&gt;
+  - checks should be completely optional, when checks are disabled, the control should behave exactly like a normal TComboBox&lt;br /&gt;
+  - checks need to use windows themes and look alike all other checkboxes&lt;br /&gt;
+  - it should be as simple as possible but not any simpler - no copy + paste from Controls.pas or StdCtrls.pas&lt;/p&gt;
+&lt;p&gt;   The control may have some bugs as it was not heavily tested and for best experience depends on some settings in DFM:&lt;/p&gt;
+&lt;pre&gt;AutoComplete = False
+Style = csDropDownList&lt;/pre&gt;&lt;p&gt;   Having said that, for all those who seek a free TCheckComboBox which have all or some of aforementioned features, feel free to use it.&lt;/p&gt;
+&lt;p&gt;The component is available to download from &lt;a href=&quot;https://github.com/t00/deltoo#tcheckcombobox&quot;&gt;https://github.com/t00/deltoo#tcheckcombobox&lt;/a&gt; .&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/delphi&quot;&gt;delphi&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 12 Dec 2012 10:52:02 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">14 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/simple-themed-tcheckcombobox-control-delphi-tcombobox-checkboxes#comments</comments>
+</item>
+<item>
+ <title>Relocator 1.0</title>
+ <link>https://turecki.net/node/1</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;   Witajcie na moim wysypisku gadżetów, pomysłów i niekonwencjonalnych opinii.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/sites/default/files/relocator.png&quot;&gt;&lt;img src=&quot;/sites/default/files/relocator_tn.png&quot; border=&quot;0&quot; alt=&quot;&quot; id=&quot;BLOGGER_PHOTO_ID_5192749226327814834&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+   Na dobry początek publikuję gadżet - programik Relocator, który korzysta z możliwości tworzenia skrótów (oryginalna nazwa &quot;Junctions&quot;) systemu plików NTFS w Windows XP i Vista, które w przeciwieństwie do standardowych skrótów (plików .lnk), mogą udawać foldery i pozwalają przenosić programy oraz ich dane w inne miejsca bez potrzeby ich instalacji i konfiguracji.&lt;br /&gt;
+&lt;br /&gt;&lt;br /&gt;
+   Relocator 1.0 jest przygotowany do przenoszenia bazy PostgreSQL w wersji 8.2 do innego folderu i/lub na inny dysk, używanej przez program &lt;a href=&quot;http://www.mmedica.abg.com.pl&quot;&gt;mMedica&lt;/a&gt;, ale z powodzeniem można z jego pomocą przenieść np. pocztę Outlook Express na zaszyfrowany programem &lt;a href=&quot;http://www.truecrypt.org&quot;&gt;TrueCrypt&lt;/a&gt; pendrive. Najważniejsze jest aby pamiętać, że program korzystający z przenoszonych danych musi być na czas przenoszenia zamknięty. Baza &lt;a href=&quot;http://www.postgresql.org&quot;&gt;PostgreSQL&lt;/a&gt; w wersji 8.2 jest automatycznie zatrzymywana na czas przenoszenia.&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+&lt;h1&gt;&lt;a href=&quot;/sites/default/files/relocator10.zip&quot;&gt;Pobierz Relocator 1.0&lt;/a&gt;&lt;/h1&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/delphi&quot;&gt;delphi&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 23 Apr 2008 22:00:00 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">1 at https://turecki.net</guid>
+ <comments>https://turecki.net/node/1#comments</comments>
+</item>
+</channel>
+</rss>

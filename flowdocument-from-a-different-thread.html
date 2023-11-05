@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+<link rel="canonical" href="node/20.html" />
+<link rel="shortlink" href="node/20.html" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="shortcut icon" href="sites/all/themes/nexus/favicon.ico" type="image/vnd.microsoft.icon" />
+<title>FlowDocument from a different thread - &quot;The calling thread cannot access this object because a different thread owns it.&quot; | Michał Turecki</title>
+<link type="text/css" rel="stylesheet" href="sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all" />
+<link type="text/css" rel="stylesheet" href="sites/default/files/css/css_srkZYgj6sRCmlRFbg8RXZZwmQlPsaT26X9fTuwxh_UE.css" media="all" />
+<link type="text/css" rel="stylesheet" href="sites/default/files/css/css_Y5uCOCfOAkjUfMmBhpaWVcM3oH3I5BZx329toWp0ukA.css" media="all" />
+<link type="text/css" rel="stylesheet" href="sites/default/files/css/css_5aQvY9eDN5XIiayMtb_05FejVu1px73z0dS0wFjNJKo.css" media="all" />
+<script type="text/javascript" src="sites/default/files/js/js_QwNzQiXbTATgX0M-_QL1qnwVy0bhzhL0wFmwNDj-VCg.js"></script>
+<script type="text/javascript" src="sites/default/files/js/js_j5mWRs_KOxlU6vD_LGLwhVkufrLTlEWol4E0UDyFzd4.js"></script>
+<script type="text/javascript" src="sites/default/files/js/js_ZPMVUwauT3CzfUSIYk-Kc3nwhp80i90VcKjYuHm5owQ.js"></script>
+<script type="text/javascript" src="sites/default/files/js/js_38dYfT5tBcNRDpGLvmZst3EvwIKHRrNMAUPl_CmZHoU.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","setHasJsCookie":0,"ajaxPageState":{"theme":"nexus","theme_token":"3s5s7b8Qf9GOH4CzgEAJ0wnVr33Ex33uTEhn-NFvMlA","js":{"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.11\/jquery.min.js":1,"misc\/jquery-extend-3.4.0.js":1,"misc\/jquery-html-prefilter-3.5.0-backport.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/libraries\/prettify\/src\/prettify.js":1,"sites\/all\/libraries\/prettify\/src\/lang-css.js":1,"sites\/all\/libraries\/prettify\/src\/lang-sql.js":1,"sites\/all\/modules\/prettify\/prettify.loader.js":1,"sites\/all\/themes\/nexus\/js\/bootstrap.min.js":1,"sites\/all\/themes\/nexus\/js\/superfish.js":1,"sites\/all\/themes\/nexus\/js\/mobilemenu.js":1,"sites\/all\/themes\/nexus\/js\/custom.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"modules\/aggregator\/aggregator.css":1,"modules\/book\/book.css":1,"modules\/comment\/comment.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"modules\/poll\/poll.css":1,"modules\/user\/user.css":1,"modules\/forum\/forum.css":1,"sites\/all\/themes\/nexus\/css\/bootstrap.min.css":1,"sites\/all\/themes\/nexus\/css\/flexslider.css":1,"sites\/all\/themes\/nexus\/style.css":1,"sites\/all\/modules\/prettify\/styles\/stackoverflow.css":1}},"prettify":{"linenums":false,"match":".content","nocode":"no-code","custom":[],"markup":{"code":true,"pre":true,"precode":false}}});
+//--><!]]>
+</script>
+<!--[if lt IE 9]><script src="/sites/all/themes/nexus/js/html5.js"></script><![endif]-->
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-first page-node page-node- page-node-20 node-type-story">
+    <div id="page">
+  <header id="masthead" class="site-header container" role="banner">
+    <div class="row">
+      <div id="logo" class="site-branding col-sm-6">
+                <h1 id="site-title">
+          <a href="node.html" title="Home">Michał Turecki</a>
+        </h1>
+      </div>
+      <div class="col-sm-6 mainmenu">
+        <div class="mobilenavi"></div>
+        <nav id="navigation" role="navigation">
+          <div id="main-menu">
+                      </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+
+  
+  
+  
+    <div id="main-content">
+    <div class="container"> 
+      <div class="row">
+                <div id="primary" class="content-area col-sm-8">
+          <section id="content" role="main" class="clearfix">
+            <div id="breadcrumbs"><h2 class="element-invisible">You are here</h2><nav class="breadcrumb"><a href="node.html">Home</a> » FlowDocument from a different thread - &quot;The calling thread cannot access this object because a different thread owns it.&quot;</nav></div>                                    <div id="content-wrap">
+                            <h1 class="page-title">FlowDocument from a different thread - &quot;The calling thread cannot access this object because a different thread owns it.&quot;</h1>                                                                      <div class="region region-content">
+  <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+                          
+              <ul class="meta clearfix">
+          <li><strong>Posted on:</strong> 7 July 2014</li>
+          <li><strong>By:</strong> <span class="username">Michał Turecki</span></li>   
+        </ul>
+      
+    
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even"><p>The FlowDocument along with most of the elements it contains inherits from DispatcherObject class. This means when constructed, it becomes linked to the thread in which it was constructed and causes several implications.</p>
+<p>   I'm sure such link was created for a reason - so that FlowDocument objects presented using WPF are not modified in a background thread as the updating is probably not implemented. I also won't debate on why objects contained in FlowDocument have no common, shared way of visiting them (IAddChild interface is helping with adding but something like IHaveChildren is not implemented).</p>
+<p>   Back to the topic - FlowDocument created by one thread cannot be used in another nor any of each one's inner objects. Or can't it? </p>
+<p>   One solution includes serializing a document in one thread and deserializing it in another (see <a href="http://chrismylonas.blogspot.co.uk/2007/12/flowdocument-and-multiple-threads.html">this blog entry</a>). This is a slow process as serialization is costly and serialization of a FlowDocument object with images and other graphical elements might not work at all unless XamlPackage format is used - and this one is even slower as requires ZIP compression/decompression.</p>
+<p>Another is to create all FlowDocument objects on UI thread (see <a href="http://stackoverflow.com/questions/6890000/backgroundworker-and-wpf">this SO article</a>). Seems easy to do but what if there are thousand of objects which need to be added to a FlowDocument and at the same time user interface should stay responsive, even if it only needs to display a progress dialog ?</p>
+<p>I found out another way to solve this problem, it is kind of hackish but seems to do the job for my needs:</p>
+<pre>
+public static void AttachToCurrentThread(this FlowDocument document)
+{
+	var dispatcher = Dispatcher.CurrentDispatcher;
+	var field = typeof(DispatcherObject).GetField("_dispatcher", BindingFlags.NonPublic | BindingFlags.Instance);
+	if(field == null)
+	{
+		throw new InvalidOperationException("_dispatcher property missing on DispatcherObject");
+	}
+	SetDispatcher(document, field, dispatcher, FlowDocumentVisitors);
+}
+
+private static readonly Func&lt;object, object&gt;[] FlowDocumentVisitors =
+{
+	x =&gt; (x is FlowDocument) ? ((FlowDocument) x).Blocks : null,
+	x =&gt; (x is Section) ? ((Section) x).Blocks : null,
+	x =&gt; (x is BlockUIContainer) ? ((BlockUIContainer) x).Child : null,
+	x =&gt; (x is InlineUIContainer) ? ((InlineUIContainer) x).Child : null,
+	x =&gt; (x is Span) ? ((Span) x).Inlines : null,
+	x =&gt; (x is AnchoredBlock) ? ((AnchoredBlock) x).Blocks : null,
+	x =&gt; (x is Paragraph) ? ((Paragraph) x).Inlines : null,
+	x =&gt; (x is Table) ? ((Table) x).RowGroups : null,
+	x =&gt; (x is Table) ? ((Table) x).Columns : null,
+	x =&gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&gt; rg.Rows) : null,
+	x =&gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&gt; rg.Rows).SelectMany(r =&gt; r.Cells) : null,
+	x =&gt; (x is TableCell) ? ((TableCell) x).Blocks : null,
+	x =&gt; (x is TableCell) ? ((TableCell) x).BorderBrush : null,
+	x =&gt; (x is List) ? ((List) x).ListItems : null,
+	x =&gt; (x is ListItem) ? ((ListItem) x).Blocks : null
+};
+	
+private static void SetDispatcher(object item, FieldInfo field, object value, params Func&lt;object, object&gt;[] selectors)
+{
+	if(item is DispatcherObject)
+	{
+		var currentDispatcher = field.GetValue(item);
+		if(currentDispatcher != null &amp;&amp; currentDispatcher != value)
+		{
+			field.SetValue(item, value);
+		}
+	}
+	if(item is IEnumerable)
+	{
+		foreach(var subItem in item as IEnumerable)
+		{
+			SetProperty(subItem, field, value, selectors);
+		}
+	}
+	if(selectors != null)
+	{
+		foreach(var selector in selectors.Select(x =&gt; x(item)).Where(x =&gt; x != null))
+		{
+			SetProperty(selector, field, value, selectors);
+		}
+	}
+}
+</pre><p>
+Basically it just traverses FlowDocument and it's objects searching for DependencyObject instances and using reflection updates the _dispatcher private variable. This variable name can change in the future, the FlowDocument structure also can change so this solution can be considered not elegant or not stable but having said that DispatcherObject didn't change since .Net 3.5 and AttachToCurrentThread function can be easily adapted to handle different types of FlowDocument blocks and it's inner objects when those inherit from DispatcherObject.</p>
+<p>If you are just reading this paragraph then feel free to leave some feedback, especially if I missed any important collections of DispatcherObject instances in the selectors array.</p>
+<p>Update:</p>
+<p>The previous code was expecting an IEnumerable as input and while this is fine and optimal (less calls) but not flexible enough to handle special cases well.<br />
+Unfortunately loading of a packed FlowDocument object, saved using XamlPackage format will fail on a non-STA thread ("The calling thread must be STA, because many UI components require this" exception  thrown when TextRange.Load is called on a non-UI thread). This is a show-stopper for me so I can't use the code above anymore but it might become handy for someone not using Images.<br />
+I also updated it to support tables and lists and commented out style handling which I did not need (Styles are usually not tied to a thread anyway).<br />
+Actually the code can be generalized to handle any object, just change AttachToCurrentThread document argument type to object.</p>
+<p>Update 2:<br />
+Some cosmetic changes and added a couple additional FlowDocument elements in a visitor.</p>
+</div></div></div><div class="field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="taxonomy/term/3.html">c#</a></div><div class="field-item odd"><a href="taxonomy/term/55.html">flowdocument</a></div><div class="field-item even"><a href="taxonomy/term/4.html">programming</a></div></div></div>  </div>
+
+      <footer>
+      <ul class="links inline"><li class="comment_forbidden first last"></li>
+</ul>    </footer>
+  
+    </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+            </div>
+          </section>
+        </div>
+                  <aside id="sidebar" class="col-sm-4" role="complementary">
+           <div class="region region-sidebar-first">
+  <div id="block-menu-menu-menu" class="block block-menu">
+
+        <h2 >Menu</h2>
+    
+  <div class="content">
+    <ul class="menu"><li class="first leaf"><a href="node.html" title="">Home</a></li>
+<li class="last leaf"><a href="pl/node/6.html" title="Kalkulator przelewów elixir">Śledź złoty - kiedy dojdzie przelew ?</a></li>
+</ul>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+        <h2 >Contact</h2>
+    
+  <div class="content">
+    <table>
+<tr>
+<td>email:</td>
+<td>turecki<script language="javascript">document.write('@gm');</script>ail.com</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.linkedin.com/in/michal-turecki"><img src="sites/default/files/linkedin.png"/></a></td>
+</tr>
+</table>  </div>
+  
+</div> <!-- /.block -->
+<div id="block-block-1" class="block block-block">
+
+      
+  <div class="content">
+    <div style="padding-bottom: 70px">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 160x600, created 9/21/09 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:160px;height:600px"
+     data-ad-client="ca-pub-7061782024161962"
+     data-ad-slot="4289624535"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>  </div>
+  
+</div> <!-- /.block -->
+</div>
+ <!-- /.region -->
+          </aside> 
+              </div>
+    </div>
+  </div>
+
+  
+  
+  <footer id="colophon" class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="fcred col-sm-12">
+          Copyright &copy; 2023 <a href="node.html">Michał Turecki</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  </body>
+</html>

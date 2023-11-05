@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - flowdocument</title>
+ <link>https://turecki.net/tags/flowdocument</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>FlowDocument from a different thread - &quot;The calling thread cannot access this object because a different thread owns it.&quot;</title>
+ <link>https://turecki.net/flowdocument-from-a-different-thread</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;The FlowDocument along with most of the elements it contains inherits from DispatcherObject class. This means when constructed, it becomes linked to the thread in which it was constructed and causes several implications.&lt;/p&gt;
+&lt;p&gt;   I&#039;m sure such link was created for a reason - so that FlowDocument objects presented using WPF are not modified in a background thread as the updating is probably not implemented. I also won&#039;t debate on why objects contained in FlowDocument have no common, shared way of visiting them (IAddChild interface is helping with adding but something like IHaveChildren is not implemented).&lt;/p&gt;
+&lt;p&gt;   Back to the topic - FlowDocument created by one thread cannot be used in another nor any of each one&#039;s inner objects. Or can&#039;t it? &lt;/p&gt;
+&lt;p&gt;   One solution includes serializing a document in one thread and deserializing it in another (see &lt;a href=&quot;http://chrismylonas.blogspot.co.uk/2007/12/flowdocument-and-multiple-threads.html&quot;&gt;this blog entry&lt;/a&gt;). This is a slow process as serialization is costly and serialization of a FlowDocument object with images and other graphical elements might not work at all unless XamlPackage format is used - and this one is even slower as requires ZIP compression/decompression.&lt;/p&gt;
+&lt;p&gt;Another is to create all FlowDocument objects on UI thread (see &lt;a href=&quot;http://stackoverflow.com/questions/6890000/backgroundworker-and-wpf&quot;&gt;this SO article&lt;/a&gt;). Seems easy to do but what if there are thousand of objects which need to be added to a FlowDocument and at the same time user interface should stay responsive, even if it only needs to display a progress dialog ?&lt;/p&gt;
+&lt;p&gt;I found out another way to solve this problem, it is kind of hackish but seems to do the job for my needs:&lt;/p&gt;
+&lt;pre&gt;
+public static void AttachToCurrentThread(this FlowDocument document)
+{
+	var dispatcher = Dispatcher.CurrentDispatcher;
+	var field = typeof(DispatcherObject).GetField(&quot;_dispatcher&quot;, BindingFlags.NonPublic | BindingFlags.Instance);
+	if(field == null)
+	{
+		throw new InvalidOperationException(&quot;_dispatcher property missing on DispatcherObject&quot;);
+	}
+	SetDispatcher(document, field, dispatcher, FlowDocumentVisitors);
+}
+
+private static readonly Func&amp;lt;object, object&amp;gt;[] FlowDocumentVisitors =
+{
+	x =&amp;gt; (x is FlowDocument) ? ((FlowDocument) x).Blocks : null,
+	x =&amp;gt; (x is Section) ? ((Section) x).Blocks : null,
+	x =&amp;gt; (x is BlockUIContainer) ? ((BlockUIContainer) x).Child : null,
+	x =&amp;gt; (x is InlineUIContainer) ? ((InlineUIContainer) x).Child : null,
+	x =&amp;gt; (x is Span) ? ((Span) x).Inlines : null,
+	x =&amp;gt; (x is AnchoredBlock) ? ((AnchoredBlock) x).Blocks : null,
+	x =&amp;gt; (x is Paragraph) ? ((Paragraph) x).Inlines : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).Columns : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&amp;gt; rg.Rows) : null,
+	x =&amp;gt; (x is Table) ? ((Table) x).RowGroups.SelectMany(rg =&amp;gt; rg.Rows).SelectMany(r =&amp;gt; r.Cells) : null,
+	x =&amp;gt; (x is TableCell) ? ((TableCell) x).Blocks : null,
+	x =&amp;gt; (x is TableCell) ? ((TableCell) x).BorderBrush : null,
+	x =&amp;gt; (x is List) ? ((List) x).ListItems : null,
+	x =&amp;gt; (x is ListItem) ? ((ListItem) x).Blocks : null
+};
+	
+private static void SetDispatcher(object item, FieldInfo field, object value, params Func&amp;lt;object, object&amp;gt;[] selectors)
+{
+	if(item is DispatcherObject)
+	{
+		var currentDispatcher = field.GetValue(item);
+		if(currentDispatcher != null &amp;amp;&amp;amp; currentDispatcher != value)
+		{
+			field.SetValue(item, value);
+		}
+	}
+	if(item is IEnumerable)
+	{
+		foreach(var subItem in item as IEnumerable)
+		{
+			SetProperty(subItem, field, value, selectors);
+		}
+	}
+	if(selectors != null)
+	{
+		foreach(var selector in selectors.Select(x =&amp;gt; x(item)).Where(x =&amp;gt; x != null))
+		{
+			SetProperty(selector, field, value, selectors);
+		}
+	}
+}
+&lt;/pre&gt;&lt;p&gt;
+Basically it just traverses FlowDocument and it&#039;s objects searching for DependencyObject instances and using reflection updates the _dispatcher private variable. This variable name can change in the future, the FlowDocument structure also can change so this solution can be considered not elegant or not stable but having said that DispatcherObject didn&#039;t change since .Net 3.5 and AttachToCurrentThread function can be easily adapted to handle different types of FlowDocument blocks and it&#039;s inner objects when those inherit from DispatcherObject.&lt;/p&gt;
+&lt;p&gt;If you are just reading this paragraph then feel free to leave some feedback, especially if I missed any important collections of DispatcherObject instances in the selectors array.&lt;/p&gt;
+&lt;p&gt;Update:&lt;/p&gt;
+&lt;p&gt;The previous code was expecting an IEnumerable as input and while this is fine and optimal (less calls) but not flexible enough to handle special cases well.&lt;br /&gt;
+Unfortunately loading of a packed FlowDocument object, saved using XamlPackage format will fail on a non-STA thread (&quot;The calling thread must be STA, because many UI components require this&quot; exception  thrown when TextRange.Load is called on a non-UI thread). This is a show-stopper for me so I can&#039;t use the code above anymore but it might become handy for someone not using Images.&lt;br /&gt;
+I also updated it to support tables and lists and commented out style handling which I did not need (Styles are usually not tied to a thread anyway).&lt;br /&gt;
+Actually the code can be generalized to handle any object, just change AttachToCurrentThread document argument type to object.&lt;/p&gt;
+&lt;p&gt;Update 2:&lt;br /&gt;
+Some cosmetic changes and added a couple additional FlowDocument elements in a visitor.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/c&quot;&gt;c#&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/flowdocument&quot;&gt;flowdocument&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Mon, 07 Jul 2014 14:28:23 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">20 at https://turecki.net</guid>
+ <comments>https://turecki.net/flowdocument-from-a-different-thread#comments</comments>
+</item>
+</channel>
+</rss>

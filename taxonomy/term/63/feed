@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - android</title>
+ <link>https://turecki.net/tags/android</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Updating CyanogenMod on an encrypted Android phone</title>
+ <link>https://turecki.net/content/updating-cyanogenmod-encrypted-android-phone</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Required (Windows):&lt;/p&gt;
+&lt;p&gt;1. Download and install Universal ADB Drivers: &lt;a href=&quot;https://github.com/koush/UniversalAdbDriver&quot;&gt;https://github.com/koush/UniversalAdbDriver&lt;/a&gt; or &lt;a href=&quot;http://adbdriver.com/downloads/&quot;&gt;http://adbdriver.com/downloads/&lt;/a&gt;&lt;br /&gt;
+2. Download and install minimal ADB + Fastboot installation: &lt;a href=&quot;http://forum.xda-developers.com/showthread.php?t=2317790&quot;&gt;http://forum.xda-developers.com/showthread.php?t=2317790&lt;/a&gt;&lt;br /&gt;
+3. Open windows command prompt and go to folder when adb is installed - if in doubt SHIFT + right click on a folder containing newly installed adb.exe and select &quot;Open command window here&quot;.&lt;/p&gt;
+&lt;p&gt;Now there are easy way and hard way. Easy first:&lt;/p&gt;
+&lt;p&gt;4. Reboot the phone into recovery. For Galaxy S3 it&#039;s done using Volume Up + Power + Menu combination.&lt;br /&gt;
+5. Select &quot;install zip from sideload&quot;&lt;br /&gt;
+6. In adb shell type:&lt;/p&gt;
+&lt;pre&gt;adb sideload C:\YourDownloads\cmXXXXXXXXXXX.zip&lt;/pre&gt;&lt;p&gt;
+7. After installation is successful wipe cache partitions to prevent binary incompatibilities between Android releases:&lt;br /&gt;
+- wipe cache partition&lt;br /&gt;
+- advanced&lt;br /&gt;
+  - wipe dalvik cache&lt;br /&gt;
+8. Optional - you may want to install appropriate gapps package to enjoy google experiece on your phone/tablet: &lt;a href=&quot;http://wiki.cyanogenmod.org/w/Google_Apps&quot;&gt;http://wiki.cyanogenmod.org/w/Google_Apps&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;And a hard way:&lt;/p&gt;
+&lt;p&gt;4. Open adb shell&lt;/p&gt;
+&lt;pre&gt;adb shell&lt;/pre&gt;&lt;p&gt;
+6. Mount data partition:&lt;/p&gt;
+&lt;pre&gt;mount -t tmpfs none /data
+
+mkdir /data/media
+cd /data/media/&lt;/pre&gt;&lt;p&gt;
+7. Open another adb terminal and run:&lt;/p&gt;
+&lt;pre&gt;adb push UPDATE-FILE-YOU-DOWNLOADED /data/media &lt;/pre&gt;&lt;p&gt;
+8. In recovery select install zip from sdcard -&amp;gt;  select the name of the file you pushed to /data/media&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/android&quot;&gt;android&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Mon, 24 Nov 2014 22:44:33 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">22 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/updating-cyanogenmod-encrypted-android-phone#comments</comments>
+</item>
+</channel>
+</rss>

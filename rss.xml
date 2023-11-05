@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki</title>
+ <link>https://turecki.net</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>SQL Server useful but less known features</title>
+ <link>https://turecki.net/content/sql-server-useful-less-known-features</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;h4&gt;Checking who is connected to the database&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;sp_who&lt;br /&gt;
+&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SELECT&lt;br /&gt;
+    NULL as [Connections by Database],&lt;br /&gt;
+    [host_name] AS [Client Machine],&lt;br /&gt;
+    db.name AS [Database],&lt;br /&gt;
+    [program_name] AS [Client Program],&lt;br /&gt;
+    COUNT(*) AS [Open Connections]&lt;br /&gt;
+FROM sys.dm_exec_sessions s (nolock)&lt;br /&gt;
+LEFT JOIN sys.dm_exec_requests r (nolock) ON r.session_id = s.session_id&lt;br /&gt;
+LEFT JOIN sys.databases db (nolock) ON db.database_id = r.database_id&lt;br /&gt;
+WHERE s.session_id &amp;gt;= 50 -- Ignore SQL Server processes&lt;br /&gt;
+GROUP BY [host_name], db.name, [program_name]&lt;br /&gt;
+ORDER BY [Client Machine], [Database], [Client Program]&lt;br /&gt;
+&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Adjusting connection pooling settings&lt;/h4&gt;
+&lt;p&gt;By default pool size is 100 per database with a command timeout (effectively a connection timeout) of 15 seconds. To increase add following to the connection string:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Connection Timeout=30;Pooling=&#039;true&#039;;Max Pool Size=200&lt;/code&gt;
+&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Checking the size of column&#039;s contents&lt;/h4&gt;
+&lt;p&gt;To check how much data the column contains:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SELECT *, DATALENGTH([column]) AS ColumnSizeInBytes FROM table&lt;/code&gt;
+&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;h4&gt;Using SQL Server profiler&lt;/h4&gt;
+&lt;p&gt;Profiler is a powerful way to debug application performance problems, to check query execution time. If you&#039;re developing any application using SQL Server as a database, running it at least once for every application release can help with pinpointing possible performance issues. Remember the rule - &lt;em&gt;there should be a constant number of queries regardless of the amount of records fetched&lt;/em&gt; - that way application will scale better. Sometimes it&#039;s better to replace a single complex query with more simpler queries because for each result row, columns shared by joins are repeated and delivered to client for processing many times.
+&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql&quot;&gt;SQL&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/databases&quot;&gt;databases&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql-server&quot;&gt;sql-server&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 02 Nov 2016 11:43:56 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">39 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/sql-server-useful-less-known-features#comments</comments>
+</item>
+<item>
+ <title>Online encode and decode base64, hex,  url</title>
+ <link>https://turecki.net/content/online-encode-and-decode-base64-hex-url</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;
+&lt;!--//--&gt;&lt;![CDATA[// &gt;&lt;!--
+
+&lt;!--
+
+function urlDecode(s)
+{
+    return decodeURIComponent(s);
+}
+
+function urlEncode(s)
+{
+    return encodeURI(s);
+}
+
+function base64Decode(s)
+{
+    return window.atob(s);
+}
+
+function base64Encode(s)
+{
+    return window.btoa(s);
+}
+
+function hexDecode(s)
+{
+    var r = &#039;&#039;;
+    for(var i = 0; i &lt; s.length; i += 2)
+    {
+        r += String.fromCharCode(parseInt(s.substr(i, 2), 16));
+    }
+    return r;
+}
+
+function hexEncode(s)
+{
+    var hex;
+    var r = &#039;&#039;;
+    for(var i = 0; i &lt; s.length; i++)
+    {
+        r += s.charCodeAt(i).toString(16);
+    }
+    return r;
+}
+
+//--&gt;
+//--&gt;&lt;!]]&gt;
+&lt;/script&gt;&lt;form name=&quot;encoder&quot; onsubmit=&quot;return false;&quot; id=&quot;encoder&quot;&gt;
+&lt;textarea name=&quot;text&quot; rows=&quot;10&quot; style=&quot;width:80%;&quot;&gt;&lt;/textarea&gt;
+&lt;table style=&quot;width: auto&quot;&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;input value=&quot;Encode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=urlEncode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;td&gt;URL&lt;/td&gt;
+&lt;td&gt;&lt;input value=&quot;Decode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=urlDecode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;input value=&quot;Encode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=base64Encode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;td&gt;Base 64&lt;/td&gt;
+&lt;td&gt;&lt;input value=&quot;Decode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=base64Decode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;input value=&quot;Encode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=hexEncode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;td&gt;Hex&lt;/td&gt;
+&lt;td&gt;&lt;input value=&quot;Decode&quot; type=&quot;button&quot; onclick=&quot;document.encoder.text.value=hexDecode(document.encoder.text.value)&quot; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan=&quot;3&quot;&gt;&lt;input type=&quot;reset&quot; value=&quot;Clear&quot; /&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/decode&quot;&gt;decode&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/encode&quot;&gt;encode&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/javascript&quot;&gt;javascript&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/online&quot;&gt;online&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Mon, 09 May 2016 08:19:08 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">38 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/online-encode-and-decode-base64-hex-url#comments</comments>
+</item>
+<item>
+ <title>Git tricks</title>
+ <link>https://turecki.net/content/git-tricks</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Inspired by spring cleaning of a collection of &quot;New Text Document (n).txt&quot; files on my desktop I decided to prepare a collection of git useful scripts, yet another. Here is the list:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;h3&gt;Replace git commit user name and email address in a branch history:&lt;/h3&gt;
+&lt;pre&gt;
+#!/bin/sh
+
+git filter-branch --env-filter &#039;
+OLD_EMAIL=&quot;not@used.anymore&quot;
+CORRECT_NAME=&quot;My Name&quot;
+CORRECT_EMAIL=&quot;my@new.email&quot;
+if [ &quot;$GIT_COMMITTER_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]
+then
+    export GIT_COMMITTER_NAME=&quot;$CORRECT_NAME&quot;
+    export GIT_COMMITTER_EMAIL=&quot;$CORRECT_EMAIL&quot;
+fi
+if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]
+then
+    export GIT_AUTHOR_NAME=&quot;$CORRECT_NAME&quot;
+    export GIT_AUTHOR_EMAIL=&quot;$CORRECT_EMAIL&quot;
+fi
+&#039; --tag-name-filter cat master --branches --tags
+&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/git&quot;&gt;git&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Thu, 28 Apr 2016 13:50:25 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">37 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/git-tricks#comments</comments>
+</item>
+<item>
+ <title>Windows 10 apps search not finding your programs</title>
+ <link>https://turecki.net/content/windows-10-apps-search-not-finding-your-programs</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;To fix:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Launch PowerShell ad Administrator
+&lt;/li&gt;&lt;li&gt;Run the following command:&lt;br /&gt;
+&lt;pre&gt;
+Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register &quot;$($_.InstallLocation)\AppXManifest.xml&quot;}
+&lt;/pre&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/windows-10&quot;&gt;windows 10&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/windows&quot;&gt;windows&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Tue, 29 Mar 2016 08:05:01 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">36 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/windows-10-apps-search-not-finding-your-programs#comments</comments>
+</item>
+<item>
+ <title>RDPWrap download - remotely connecting to Windows using Remote Desktop multiple times without hacking termsrv.dll</title>
+ <link>https://turecki.net/content/rdpwrap-download-remotely-connecting-windows-using-remote-desktop-multiple-times-without</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Having a home media centre PC (categorised as such because it&#039;s connected to a TV instead of a monitor) which is always on, from time to time I need to remote in to it and only Server editions of Windows allow a user to be logged in both locally and remotely at the same time.&lt;/p&gt;
+&lt;p&gt;As far as I know there are 2 ways to correct this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Patching termsrv.dll library. This was made harder in Windows 10 as permissions to modify this file have been limited recently and changing of file permissions is needed which is not ideal. It&#039;s also not windows update friendly.
+&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;https://github.com/stascorp/rdpwrap&quot;&gt;RDP Wrapper library by Stas&#039;M&lt;/a&gt; is a set of tools prepared to hook into windows remote desktop facilities. It is not invasive but definitely hackish in a way that as far as I know it hooks on in-memory RDP methods.
+&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;As it states on the repository website:&lt;/p&gt;
+&lt;p&gt;RDP Wrapper works as a layer between Service Control Manager and Terminal Services, so the original termsrv.dll file remains untouched. Also this method is very strong against Windows Update&lt;/p&gt;
+&lt;p&gt;&lt;strike&gt;There is one problem though. For some reason  &lt;a href=&quot;https://github.com/binarymaster/rdpwrap/releases&quot;&gt;binary releases section&lt;/a&gt; does not contain the actual binaries (which need to be compiled using Delphi). Not many people out there have access to Delphi development environment so I prepared a build which can be downloaded below for all those who are interested in experimenting with it.&lt;/strike&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/binarymaster/rdpwrap/releases&quot;&gt;Binary releases &lt;/a&gt; are now available, download the binaries from GitHub to get most up to date version.&lt;/p&gt;
+&lt;p&gt;How to use:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Run install.bat as Administrator to install the patch
+&lt;/li&gt;&lt;li&gt;Run update.bat as Administrator to update current list of binary patches from git (firewall must allow RDPWInst.exe to access the Internet - it grabs most recent patch offsets from github)
+&lt;/li&gt;&lt;/ol&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;Package icon&quot; title=&quot;application/zip&quot; src=&quot;/modules/file/icons/package-x-generic.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/RDPWrapper16.zip&quot; type=&quot;application/zip; length=1590221&quot;&gt;RDPWrapper16.zip&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;1.52 MB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/hacking&quot;&gt;hacking&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Thu, 10 Mar 2016 08:57:22 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">35 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/rdpwrap-download-remotely-connecting-windows-using-remote-desktop-multiple-times-without#comments</comments>
+</item>
+<item>
+ <title>Upgrading clean Windows 7 installation to Windows 10 - Windows Update issues</title>
+ <link>https://turecki.net/content/upgrading-clean-windows-7-installation-windows-10-windows-update-issues</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;After a clean install of Windows 7 for the sole purpose of upgrading it soon after to Windows 10 I&#039;ve encountered an interesting Windows Update issue: Windows Update screen became stuck on &quot;Checking for updates...&quot; message.&lt;br /&gt;
+Issue was already reported in many places, for many different Windows versions but none of the solutions worked for me except the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Directly after upgrading to Service Pack 1 or after installing from SP1 (refresh) media, installer is stuck on &quot;Checking for updates...&quot; and svchost (netsvcs) is using 100% of one of the CPU cores (for 2 cores 50%, for 4 cores 25% etc.). Installing &lt;a href=&quot;https://support.microsoft.com/en-us/kb/3102810&quot;&gt;KB3102810&lt;/a&gt; will help, this update will allow continuing with updates.
+&lt;/li&gt;&lt;li&gt;After most if not all updates have been applied and Windows 10 upgrade is available (tray icon) - update is stuck again, same CPU usage of the same process. First thing to do is fixing windows updates database using a &lt;a href=&quot;https://support.microsoft.com/en-us/gp/windows-update-issues&quot;&gt;Windows Update Automated Troubleshooter&lt;/a&gt;.
+&lt;/li&gt;&lt;li&gt;Last resort solution is to use &lt;a href=&quot;http://www.majorgeeks.com/mg/getmirror/tweaking_com_windows_repair_portable,1.html&quot;&gt;Windows Repair Portable&lt;/a&gt; tool. After running Repair_Windows.exe, selecting Repairs -&amp;gt; Open Repairs unselect all and select the following options:
+&lt;ul&gt;
+&lt;li&gt;03 - Reset Service Permissions
+&lt;/li&gt;&lt;li&gt;04 - Register System Files
+&lt;/li&gt;&lt;li&gt;05 - Repair WMI
+&lt;/li&gt;&lt;li&gt;10 - Remove Policies Set By Infection
+&lt;/li&gt;&lt;li&gt;17 - Repair Windows Updates
+&lt;/li&gt;&lt;li&gt;21 - Repair MSI (Windows Installer)
+&lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;Next click &quot;Start Repairs&quot;. After reboot the svchost Windows Update process should be unstuck.
+&lt;/p&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;Hope it helps.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-7z-compressed&quot; src=&quot;/modules/file/icons/package-x-generic.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/Tweaking.com%20-%20Windows%20Repair.7z&quot; type=&quot;application/x-7z-compressed; length=15719020&quot;&gt;Tweaking.com - Windows Repair.7z&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;14.99 MB&lt;/td&gt; &lt;/tr&gt;
+ &lt;tr class=&quot;even&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;Binary Data&quot; title=&quot;application/octet-stream&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/WindowsUpdateDiagnostic.diagcab&quot; type=&quot;application/octet-stream; length=302011&quot;&gt;WindowsUpdateDiagnostic.diagcab&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;294.93 KB&lt;/td&gt; &lt;/tr&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;Binary Data&quot; title=&quot;application/octet-stream&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/Windows6.1-KB3102810-x86.msu&quot; type=&quot;application/octet-stream; length=2751664&quot;&gt;Windows6.1-KB3102810-x86.msu&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;2.62 MB&lt;/td&gt; &lt;/tr&gt;
+ &lt;tr class=&quot;even&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;Binary Data&quot; title=&quot;application/octet-stream&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/Windows6.1-KB3102810-x64.msu&quot; type=&quot;application/octet-stream; length=3328910&quot;&gt;Windows6.1-KB3102810-x64.msu&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;3.17 MB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Tue, 26 Jan 2016 21:37:02 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">33 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/upgrading-clean-windows-7-installation-windows-10-windows-update-issues#comments</comments>
+</item>
+<item>
+ <title>Reasons why PS4 breaks and how to fix it</title>
+ <link>https://turecki.net/content/reasons-why-ps4-breaks-and-how-fix-it</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Recently I received my PS4 which I sniped on &lt;a href=&quot;http://www.ebay.co.uk&quot;&gt;eBay&lt;/a&gt; as being for spares and repair. Sometimes, just sometimes spares means power cable is not working due to a blown fuse or there is a software failure which after hard reset returns back to life.&lt;/p&gt;
+&lt;p&gt;Not this time.&lt;/p&gt;
+&lt;p&gt;It&#039;s apparently a &quot;blue light of death&quot; issue. And from what there is said and shown on the vast number of Internet resources there can be many reasons for this problem including HDMI chip failure, APU chip (not always permanent) failure due to overheating, power supply unit and others.&lt;/p&gt;
+&lt;p&gt;One is HDMI output failure - this can be due to HDMI port as well as broken HDMI chip MN86471A. If PS4 starts it can also be TV handshake compatibility problem - in this case HDMI splitter will help (just not the cheapest one as these tend to produce noise).&lt;/p&gt;
+&lt;p&gt;Another issue can be a power supply unit. I hoped that this is the case and waited over 2 weeks for a replacement refurbished original Sony unit I bought on &lt;a href=&quot;http://www.aliexpress.com&quot;&gt;AliExpress&lt;/a&gt;. When it arrived instead of installing it straight away, ignoring the warranty sticker and consequences of not being able to send it back to China for more money it costed me to buy it inclusive postage, I opened it. With my &lt;a href=&quot;http://www.maplin.co.uk/p/usb-digital-microscope-with-400x-magnification-n43hh&quot;&gt;toy microscope&lt;/a&gt; for grown ups I managed to find traces of cotton used to clean flux from repair. All around &lt;a href=&quot;http://www.datasheetcatalog.com/datasheets_pdf/D/N/P/0/DNP015.shtml&quot;&gt;DNP015&lt;/a&gt; chip - a Green Mode Fairchild Power Switch. After some googling it became obvious this chip was a problem. Moreover I can fix the original supply by just replacing it with a new one.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/sites/default/files/images/151014205227159817096.jpg&quot;&gt;chip&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205417159927030.jpg&quot;&gt;board 1&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205440159949884.jpg&quot;&gt;board 2&lt;/a&gt; | &lt;a href=&quot;/sites/default/files/images/151014205456159966342.jpg&quot;&gt;board 3&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Not so easy.&lt;/p&gt;
+&lt;p&gt;PS4 still won&#039;t start and symptoms are identical for both units. After some more searching and comparing my symptoms (power on - 1-2 seconds of power - beeps - shuts off again) it is most probably that APU is to blame. I found out that changing PS4 position when starting (BluRay down for example) or pressing on the bottom side of PS4 when starting can help to force it to start. In my case it did - but obviously it&#039;s not a permanent solution. &lt;/p&gt;
+&lt;p&gt;Unfortunately this PS4 seems to run hot and after about 30 minutes it shuts down again. Thermal paste or pads will need to be replaced during... what&#039;s next in turn for servicing: reworking or reballing.&lt;/p&gt;
+&lt;p&gt;Although reballing &lt;a href=&quot;https://www.youtube.com/watch?v=1AcEt073Uds&quot;&gt;is considered a bullshit by some&lt;/a&gt;, and reworking being just a side effect of reballing, it&#039;s always worth a try. With a new &lt;a href=&quot;https://www.youtube.com/watch?v=SslTa2B3mUg&quot;&gt;hot air rework station (Atten 898D)&lt;/a&gt; I received this week I will try to apply a temporary fix (reworking by applying around 120°C hot air for 5 minutes) before doing a proper reballing using stencils and solder balls which will also arrive just arrived from China.&lt;/p&gt;
+&lt;p&gt;I don&#039;t have really high hopes though and I will keep updating this post.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/electronics&quot;&gt;electronics&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/fix&quot;&gt;fix&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/hardware&quot;&gt;hardware&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Fri, 23 Oct 2015 20:48:23 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">31 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/reasons-why-ps4-breaks-and-how-fix-it#comments</comments>
+</item>
+<item>
+ <title>Gift &amp; Art</title>
+ <link>https://turecki.net/content/gift-and-art</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Today I finished a Drupal commerce online store I worked on for some time. Not really finished - no website can be fully finished as either it&#039;s data security will deteriorate over time or content value will decrease or will become irrelevant technologically and the way information is presented will become obsolete (language evolution? augmented reality? mind melt?).&lt;/p&gt;
+&lt;p&gt;For now it&#039;s all right, check it out: &lt;a href=&quot;https://www.giftandart.co.uk&quot;&gt;gift &amp;amp; art&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/portfolio&quot;&gt;portfolio&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/website&quot;&gt;website&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/drupal&quot;&gt;drupal&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 21 Oct 2015 20:15:16 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">30 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/gift-and-art#comments</comments>
+</item>
+<item>
+ <title>How to save data from all tables in SQL Server database into CSV files (using PowerShell)</title>
+ <link>https://turecki.net/content/how-save-data-all-tables-sql-server-database-csv-files-using-powershell</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;All it takes is to create the following PowerShell script (text file with .ps1 extension) and changing $server and $db variables to match the server&#039;s host and instance name (SERVER\INSTANCE) and a database name.&lt;/p&gt;
+&lt;pre&gt;
+$destDir = Get-Location
+$server = &quot;localhost&quot;
+$db = &quot;DatabaseToExport&quot;
+
+Import-Module -Name SQLPS
+$tables = Invoke-Sqlcmd -query &quot;SELECT name FROM sys.tables&quot; -Database &quot;$db&quot; -ServerInstance &quot;$server&quot;
+foreach ($table in $tables)
+{
+	$tableName = $table[&quot;name&quot;]
+	write-host -ForegroundColor Green &quot;Creating File $tableName.csv&quot;
+	Invoke-Sqlcmd -Query &quot;SELECT * FROM $tableName;&quot; -Database &quot;$db&quot; -Server &quot;$server&quot; |
+		Export-Csv -NoTypeInformation -Path &quot;$destDir\$tableName.csv&quot; -Encoding UTF8
+}
+&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/powershell&quot;&gt;powershell&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/sql-server&quot;&gt;sql-server&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/database&quot;&gt;database&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/csv&quot;&gt;csv&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 23 Sep 2015 09:24:44 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">28 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/how-save-data-all-tables-sql-server-database-csv-files-using-powershell#comments</comments>
+</item>
+<item>
+ <title>Flashing bricked TP-LINK AC1200 Archer C5 v1.20 using JTAG cable</title>
+ <link>https://turecki.net/content/flashing-bricked-tp-link-ac1200-archer-c5-v120-using-jtag-cable</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Here is a short list of steps involved. &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Connect JTAG cable to 3.3V capable serial interface.
+&lt;/li&gt;&lt;li&gt;Make sure that cable has TX and RX swapped and only GND is connected, VCC should not be.
+&lt;/li&gt;&lt;li&gt;Run putty or other terminal software. Use baud rate 115200, 8 data bits + 1 stop bit, no parity or flow control
+&lt;/li&gt;&lt;li&gt;Boot router into UBoot by holding WPS/Reset switch when powering up. This will set router&#039;s IP address to 192.168.0.86 and it will try to boot from TFTP server 192.168.0.66 and download ArcherC5v1_tp_recovery.bin file from root drive. This way any firmware without boot can be flashed without JTAG cable. Firmware with boot (in name) should be stripped of it by running:&lt;br /&gt;
+&lt;pre&gt;dd if=firmware.bin of=stripped.bin bs=512 skip=257&lt;/pre&gt;&lt;p&gt;But yours is bricked, right?&lt;/p&gt;
+&lt;/li&gt;&lt;li&gt;Get access to the UBoot console: when the message &quot;Autobooting in 1 seconds&quot; appears, quickly type &quot;tpl&quot;. Remember - you have 1 second to type it :) UBoot console will welcome you with ap135&amp;gt; prompt.
+&lt;/li&gt;&lt;li&gt;Put &quot;firmware_noboot.bin&quot; in a root directory of your TFTP server and run following commands:&lt;br /&gt;
+&lt;pre&gt;setenv ipaddr 192.168.0.86
+setenv serverip 192.168.0.66
+tftp 0x81000000 firmware_noboot.bin
+erase 0x9f020000 +f80000
+cp.b 0x81000000 0x9f020000 0xf80000
+bootm 0x9f020000
+(or reset)
+&lt;/pre&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;After router reboots or 5 minutes passed it should now work (finally). Console should show normal linux boot process instead of an error loading kernel.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/jtag&quot;&gt;jtag&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/router&quot;&gt;router&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/hardware&quot;&gt;hardware&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Sat, 19 Sep 2015 01:40:32 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">27 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/flashing-bricked-tp-link-ac1200-archer-c5-v120-using-jtag-cable#comments</comments>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - protobuf</title>
+ <link>https://turecki.net/tags/protobuf</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>On Protobuf.Net, using AsReference and multiple instances of object which should be deserialized only once.</title>
+ <link>https://turecki.net/content/protobufnet-using-asreference-and-multiple-instances-object-which-should-be-deserialized</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;There is a ProtoBuf.Net fact regarding using AsReference which somehow I missed when digging into why [ProtoAfterDeserialization] attribute is not applied for some objects.&lt;br /&gt;
+The truth is that it is applied for some but not other objects even if I used AsReference attribute in some places.  The AsReference attribute should be applied to ALL REFERENCES TO THE OBJECT, both collections and navigational properties, NOT JUST REFERENCES OTHER THAN THE REFERENCE WE CONSIDER MAIN ONE.&lt;/p&gt;
+&lt;p&gt;A simple test to prove it is below:&lt;/p&gt;
+&lt;pre&gt;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using ProtoBuf;
+
+namespace ProtoBufAsReferenceTest
+{
+    [ProtoContract]
+    public class Office
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1)]
+        public Collection&amp;lt;Computer&amp;gt; Computers { get; private set; }
+
+        [ProtoMember(2)]
+        public Collection&amp;lt;Person&amp;gt; People { get; private set; }
+
+        public Office()
+        {
+            Computers = new Collection&amp;lt;Computer&amp;gt;();
+            People = new Collection&amp;lt;Person&amp;gt;();
+        }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+            foreach(var computer in Computers)
+            {
+                computer.Office = this;
+            }
+            foreach(var person in People)
+            {
+                person.Office = this;
+            }
+        }
+    }
+
+    [ProtoContract]
+    public class Computer
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1, AsReference = true)]
+        public Person Person { get; set; }
+
+        [ProtoIgnore]
+        public Office Office { get; set; }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+        }
+    }
+
+    [ProtoContract]
+    public class Person
+    {
+        public static int DeserializationCounter = 0;
+
+        [ProtoMember(1, AsReference = true)]
+        public Computer Computer { get; set; }
+
+        [ProtoIgnore]
+        public Office Office { get; set; }
+
+        [ProtoAfterDeserialization]
+        protected void OnDeserialize()
+        {
+            DeserializationCounter++;
+        }
+    }
+
+    [TestFixture]
+    public class TestClasses
+    {
+        [Test]
+        public void TestAsReference()
+        {
+            // 3 instances are created 1 of each type
+            var office = new Office();
+            var computer = new Computer();
+            var developer = new Person();
+
+            office.Computers.Add(computer);
+            office.People.Add(developer);
+            computer.Person = developer;
+            developer.Computer = computer;
+
+            using(var ms = new MemoryStream())
+            {
+                Serializer.NonGeneric.Serialize(ms, office);
+                ms.Position = 0;
+                Check(Serializer.Deserialize&amp;lt;Office&amp;gt;(ms));
+            }
+        }
+
+        private void Check(Office office)
+        {
+            Assert.AreEqual(1, Office.DeserializationCounter);
+            Assert.AreEqual(1, Person.DeserializationCounter); // fails - 2
+            Assert.AreEqual(1, Computer.DeserializationCounter); // fails - 2
+            var computer = office.People.First().Computer;
+            Assert.IsNotNull(computer.Office); // fails - Office is null
+        }
+    }
+}
+&lt;/pre&gt;&lt;p&gt;
+Office class contains collections of Computers and Peoople without AsReference attribute. Person reference to the Computer for a change uses AsReference attribute. In the end 2 instances of Computer and 2 instances of Person are created.&lt;/p&gt;
+&lt;p&gt;Only change necessary to fix this problem is adding AsReference to the Office class collections:&lt;/p&gt;
+&lt;pre&gt;
+        [ProtoMember(1, AsReference = true)]
+        public Collection Computers { get; private set; }
+
+        [ProtoMember(2, AsReference = true)]
+        public Collection People { get; private set; }
+&lt;/pre&gt;&lt;p&gt;
+I am not sure if this is common mistake people make when using ProtoBuf.Net but I suspect this might be the case as none of the questions on &lt;a href=&quot;http://stackoverflow.com/&quot;&gt;StackOverflow&lt;/a&gt; I&#039;ve seen in the past mention this.&lt;br /&gt;
+Or maybe it is only me who when using word &quot;reference&quot; thinks of references to the actual object which implies having at least a single copy of the actual object marked without &quot;AsReference&quot;.&lt;br /&gt;
+Bottom line is if you use AsReference, use it everywhere the object is referenced.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/c&quot;&gt;c#&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/protobuf&quot;&gt;protobuf&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/serialization&quot;&gt;serialization&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Thu, 27 Nov 2014 14:13:47 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">23 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/protobufnet-using-asreference-and-multiple-instances-object-which-should-be-deserialized#comments</comments>
+</item>
+</channel>
+</rss>

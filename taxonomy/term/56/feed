@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - bug</title>
+ <link>https://turecki.net/tags/bug</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Delphi 2007 - error running on 64-bit Windows</title>
+ <link>https://turecki.net/delphi-2007-on-64bit-windows</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Delphi 2007 is not new although it is the last non-unicode release of Delphi hence it is used frequently to maintain legacy code base.&lt;/p&gt;
+&lt;p&gt;And it has bugs. Some of them can be fixed by &lt;a href=&quot;http://andy.jgknet.de/blog/bugfix-units/vclfixpack-10/&quot;&gt;VCLFixPack&lt;/a&gt; and affect only compiled binaries.&lt;/p&gt;
+&lt;p&gt;Some are related to IDE and neither &lt;a href=&quot;http://www.cnpack.org/&quot;&gt;CnPack&lt;/a&gt; nor &lt;a href=&quot;http://www.gexperts.org/&quot;&gt;GExperts&lt;/a&gt; IDE extensions can fix them.&lt;/p&gt;
+&lt;p&gt;One of such bugs is related to debugging on 64-bit Windows. The problem is that after debugging session has ended, following error appears:&lt;/p&gt;
+&lt;pre&gt;Assertion failure: &quot;(!&quot;SetThreadContext failed&quot;)&quot; 
+in ..\win32src\thread32.cpp at line 412 
+Continue execution?&lt;/pre&gt;&lt;p&gt;
+The error was thrown by bordbk105N.dll and it was discussed &lt;a href=&quot;http://www.monien.net/delphi-2009-windows-7-64-bit-debugger-crash-workaround&quot;&gt;here (1)&lt;/a&gt; and &lt;a href=&quot;http://anotherlab.rajapet.net/2009/08/work-around-for-delphi-20072009-with.html&quot;&gt;here (2)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Unfortunately in (1) original URL has changed and (2) download links are dead so I attached a fix below as there&#039;s never enough of mirroring of the Internet. The executable is a patch tool which needs to be started as Administrator. It will modify bordbk105N.dll and fix the problem.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-msdos-program&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/Delphi_2007_2009_WOW64_Debugger_Fix.exe&quot; type=&quot;application/x-msdos-program; length=180224&quot; title=&quot;Delphi_2007_2009_WOW64_Debugger_Fix.exe&quot;&gt;Delphi_2007_2009_WOW64_Debugger_Fix.exe&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;176 KB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/delphi&quot;&gt;delphi&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/bug&quot;&gt;bug&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Wed, 03 Apr 2013 08:40:53 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">18 at https://turecki.net</guid>
+ <comments>https://turecki.net/delphi-2007-on-64bit-windows#comments</comments>
+</item>
+</channel>
+</rss>

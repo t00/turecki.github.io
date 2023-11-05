@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - windows 10</title>
+ <link>https://turecki.net/tags/windows-10</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Windows 10 apps search not finding your programs</title>
+ <link>https://turecki.net/content/windows-10-apps-search-not-finding-your-programs</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;To fix:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Launch PowerShell ad Administrator
+&lt;/li&gt;&lt;li&gt;Run the following command:&lt;br /&gt;
+&lt;pre&gt;
+Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register &quot;$($_.InstallLocation)\AppXManifest.xml&quot;}
+&lt;/pre&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/windows-10&quot;&gt;windows 10&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/windows&quot;&gt;windows&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Tue, 29 Mar 2016 08:05:01 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">36 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/windows-10-apps-search-not-finding-your-programs#comments</comments>
+</item>
+</channel>
+</rss>

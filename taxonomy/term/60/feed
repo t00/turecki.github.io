@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - source-control</title>
+ <link>https://turecki.net/tags/source-control</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>TortoiseMerge with better shortcuts, like WinMerge</title>
+ <link>https://turecki.net/content/tortoisemerge-better-shortcuts-winmerge</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;TortoiseMerge is a useful 3-way merge tool yet it lacks proper keyboard shortcuts configuration and default shortcuts seem to be designed only for basketball players, with fingers stretched from arrow keys up to function keys.&lt;br /&gt;
+Update: &lt;a href=&quot;https://code.google.com/p/tortoisegit/&quot;&gt;Current Version&lt;/a&gt; of TortoiseMerge included in TortoiseGit has the keyboard shortcuts fixed and easy to use&lt;/p&gt;
+&lt;p&gt;Fortunately it is open source. Moreover, it uses standard accelerators embedded as resources in the executable so it can be easily modified to fit our needs using only a resource editor. I used &lt;a href=&quot;http://www.angusj.com/resourcehacker/&quot;&gt;ResourceHacker&lt;/a&gt; ( ResHack.exe ) and modified these while preserving existing shortcuts.&lt;/p&gt;
+&lt;p&gt;Shortcuts are located in Accelerators -&amp;gt; 100 -&amp;gt; 1033 path.&lt;/p&gt;
+&lt;pre&gt;100 ACCELERATORS
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+	VK_Q, 57665, NOINVERT, CONTROL, VIRTKEY
+	VK_ESCAPE, 57665, NOINVERT, VIRTKEY
+	VK_DOWN, 32831, NOINVERT, VIRTKEY
+	VK_DOWN, 32831, NOINVERT, SHIFT, VIRTKEY
+	VK_LEFT, 32829, NOINVERT, VIRTKEY
+	VK_LEFT, 32829, NOINVERT, SHIFT, VIRTKEY
+	VK_RIGHT, 32830, NOINVERT, VIRTKEY
+	VK_RIGHT, 32830, NOINVERT, SHIFT, VIRTKEY
+	VK_UP, 32832, NOINVERT, VIRTKEY
+	VK_UP, 32832, NOINVERT, SHIFT, VIRTKEY
+	VK_LEFT, 32833, NOINVERT, CONTROL, VIRTKEY
+	VK_LEFT, 32833, NOINVERT, CONTROL, SHIFT, VIRTKEY
+	VK_RIGHT, 32834, NOINVERT, CONTROL, VIRTKEY
+	VK_RIGHT, 32834, NOINVERT, CONTROL, SHIFT, VIRTKEY
+	VK_F1, 57669, NOINVERT, SHIFT, VIRTKEY
+	VK_C, 57634, NOINVERT, CONTROL, VIRTKEY
+	VK_X, 57635, NOINVERT, CONTROL, VIRTKEY
+	VK_F, 57636, NOINVERT, CONTROL, VIRTKEY
+	VK_F3, 32790, NOINVERT, VIRTKEY
+	VK_F3, 32818, NOINVERT, SHIFT, VIRTKEY
+	VK_G, 32884, CONTROL, VIRTKEY
+	VK_V, 57637, NOINVERT, CONTROL, VIRTKEY
+	VK_INSERT, 57637, NOINVERT, SHIFT, VIRTKEY
+	VK_BACK, 57643, NOINVERT, ALT, VIRTKEY
+	VK_Z, 57643, NOINVERT, CONTROL, VIRTKEY
+	VK_RIGHT, 32855, NOINVERT, ALT, CONTROL, VIRTKEY
+	VK_RIGHT, 32857, NOINVERT, ALT, CONTROL, SHIFT, VIRTKEY
+	VK_LEFT, 32859, NOINVERT, ALT, CONTROL, SHIFT, VIRTKEY
+	VK_RIGHT, 32822, NOINVERT, ALT, SHIFT, VIRTKEY
+	VK_RIGHT, 32820, NOINVERT, ALT, VIRTKEY
+	VK_LEFT, 32819, NOINVERT, ALT, VIRTKEY
+	VK_LEFT, 32821, NOINVERT, ALT, SHIFT, VIRTKEY
+	VK_UP, 32780, NOINVERT, ALT, VIRTKEY
+	VK_DOWN, 32779, NOINVERT, ALT, VIRTKEY
+	VK_UP, 32802, NOINVERT, ALT, SHIFT, VIRTKEY
+	VK_DOWN, 32804, NOINVERT, ALT, SHIFT, VIRTKEY
+	VK_S, 32808, NOINVERT, ALT, VIRTKEY
+	VK_F10, 32822, NOINVERT, CONTROL, SHIFT, VIRTKEY
+	VK_F10, 32820, NOINVERT, CONTROL, VIRTKEY
+	VK_F9, 32819, NOINVERT, CONTROL, VIRTKEY
+	VK_F9, 32821, NOINVERT, CONTROL, SHIFT, VIRTKEY
+	VK_O, 57601, NOINVERT, CONTROL, VIRTKEY
+	VK_R, 32794, NOINVERT, CONTROL, VIRTKEY
+	VK_F5, 32794, NOINVERT, VIRTKEY
+	VK_S, 57603, NOINVERT, CONTROL, VIRTKEY
+	VK_S, 57604, NOINVERT, CONTROL, SHIFT, VIRTKEY
+	VK_F1, 57670, NOINVERT, VIRTKEY
+	VK_F8, 32804, NOINVERT, VIRTKEY
+	VK_F11, 32779, NOINVERT, VIRTKEY
+	VK_F7, 32779, NOINVERT, VIRTKEY
+	VK_F8, 32802, NOINVERT, SHIFT, VIRTKEY
+	VK_F11, 32780, NOINVERT, CONTROL, VIRTKEY
+	VK_UP, 32780, NOINVERT, CONTROL, VIRTKEY
+	VK_DOWN, 32779, NOINVERT, CONTROL, VIRTKEY
+	VK_F11, 32780, NOINVERT, SHIFT, VIRTKEY
+	VK_F7, 32780, NOINVERT, SHIFT, VIRTKEY
+	VK_F6, 57680, NOINVERT, VIRTKEY
+	VK_F6, 57681, NOINVERT, SHIFT, VIRTKEY
+	VK_D, 32775, NOINVERT, CONTROL, VIRTKEY
+	VK_T, 32774, NOINVERT, CONTROL, VIRTKEY
+	VK_INSERT, 57634, NOINVERT, CONTROL, VIRTKEY
+	VK_DELETE, 57635, NOINVERT, SHIFT, VIRTKEY
+	VK_INSERT, 57637, NOINVERT, SHIFT, VIRTKEY
+	VK_A, 32883, NOINVERT, CONTROL, VIRTKEY
+}&lt;/pre&gt;&lt;p&gt;
+If you are too lazy to change the resources, you can download attached TortoiseMerge.exe v1.7.15.0 and use it with recent versions of TortoiseGIT/SVN.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-upload field-type-file field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;table class=&quot;sticky-enabled&quot;&gt;
+ &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Attachment&lt;/th&gt;&lt;th&gt;Size&lt;/th&gt; &lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+ &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;&lt;span class=&quot;file&quot;&gt;&lt;img class=&quot;file-icon&quot; alt=&quot;File&quot; title=&quot;application/x-msdos-program&quot; src=&quot;/modules/file/icons/application-octet-stream.png&quot; /&gt; &lt;a href=&quot;https://turecki.net/sites/default/files/TortoiseMerge.exe&quot; type=&quot;application/x-msdos-program; length=1729760&quot; title=&quot;TortoiseMerge.exe&quot;&gt;TortoiseMerge.exe&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;1.65 MB&lt;/td&gt; &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/source-control&quot;&gt;source-control&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/hacking&quot;&gt;hacking&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/download&quot;&gt;download&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Fri, 18 Jan 2013 12:58:52 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">15 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/tortoisemerge-better-shortcuts-winmerge#comments</comments>
+</item>
+</channel>
+</rss>

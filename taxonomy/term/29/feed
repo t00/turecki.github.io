@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - linux</title>
+ <link>https://turecki.net/tags/linux</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Getting the most out of SSH - hardware acceleration tuning for AES-NI</title>
+ <link>https://turecki.net/content/getting-most-out-ssh-hardware-acceleration-tuning-aes-ni</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;On Intel some OpenSSH ciphers use hardware accelerated AES-NI extensions which leads to significally better performance. There is a pretty easy way to determine cipher performance on any particular Linux installation:&lt;/p&gt;
+&lt;pre&gt;for i in `ssh -Q cipher`; do dd if=/dev/zero bs=1M count=100 2&amp;gt; /dev/null \
+  | ssh -c $i someuser@localhost &quot;(time -p cat) &amp;gt; /dev/null&quot; 2&amp;gt;&amp;amp;1 \
+  | grep real | awk &#039;{print &quot;&#039;$i&#039;: &quot;100 / $2&quot; MB/s&quot; }&#039;; done
+&lt;/pre&gt;&lt;p&gt;
+The script will only work if someuser has key authentication configured (~/.ssh/config contains a valid entry for &lt;a href=&quot;mailto:someuser@localhost&quot;&gt;someuser@localhost&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;You can replace both 100 in the above command with 1000 to get a more reliable result but 100MB seems to be a good performance indicator without much variance when checking again.&lt;/p&gt;
+&lt;p&gt;A side note - on my proxmox installation I needed to use &quot;host&quot; CPU type to pass AES extensions to the guest machine (while still giving 3 out of 4 cores to the guest VM to keep 1 spare always available). After this change running &lt;code&gt;cat /proc/cpuinfo&lt;/code&gt; on the VM shows 3 CPUs with the following flags:&lt;br /&gt;
+&lt;code&gt;fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr&lt;br /&gt;
+sse sse2 ss syscall nx lm constant_tsc arch_perfmon rep_good nopl eagerfpu pni pclmulqdq ssse3&lt;br /&gt;
+cx16 pcid sse4_1 sse4_2 x2apic popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor&lt;br /&gt;
+lahf_lm xsaveopt fsgsbase smep erms&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Thanks to AES extensions now it&#039;s obvious that only 2 ciphers are performing really well compared to others, here is a benchmark of ciphers supported by my OpenSSH installation:&lt;/p&gt;
+&lt;pre&gt;
+3des-cbc: 21.1864 MB/s
+blowfish-cbc: 80 MB/s
+cast128-cbc: 70.922 MB/s
+arcfour: 208.333 MB/s
+arcfour128: 208.333 MB/s
+arcfour256: 188.679 MB/s
+aes128-cbc: 181.818 MB/s
+aes192-cbc: 172.414 MB/s
+aes256-cbc: 161.29 MB/s
+rijndael-cbc@lysator.liu.se: 161.29 MB/s
+aes128-ctr: 104.167 MB/s
+aes192-ctr: 93.4579 MB/s
+aes256-ctr: 85.4701 MB/s
+aes128-gcm@openssh.com: 370.37 MB/s
+aes256-gcm@openssh.com: 357.143 MB/s
+chacha20-poly1305@openssh.com: 166.667 MB/s
+&lt;/pre&gt;&lt;p&gt;
+Both &lt;a href=&quot;mailto:aes128-gcm@openssh.com&quot;&gt;aes128-gcm@openssh.com&lt;/a&gt; and &lt;a href=&quot;mailto:aes256-gcm@openssh.com&quot;&gt;aes256-gcm@openssh.com&lt;/a&gt; are leaving competition far behind so now it&#039;s time to make ssh actually use AES 256 first if possible. When running man sshd_config it shows the original order of cipher preference (yours can be different):&lt;/p&gt;
+&lt;pre&gt;
+aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,
+aes128-gcm@openssh.com,aes256-gcm@openssh.com,
+chacha20-poly1305@openssh.com,
+aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,
+aes256-cbc,arcfour
+&lt;/pre&gt;&lt;p&gt;
+I trust OpenSSH team the order in terms of security is tuned properly yet AES256 is known to be industry standard cipher and I hope moving &lt;a href=&quot;mailto:aes256-gcm@openssh.com&quot;&gt;aes256-gcm@openssh.com&lt;/a&gt; to the front of the list should be optimal.&lt;/p&gt;
+&lt;p&gt;Both sshd_config and ~/.ssh/config configuration files expect lines with supported ciphers:&lt;/p&gt;
+&lt;pre&gt;
+# /etc/ssh/ssh_config (or ~/.ssh/config) and sshd_config
+# Protocol version 1
+Cipher aes256-gcm@openssh.com
+# Protocol version 2
+Ciphers aes256-gcm@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-gcm@openssh.com,chacha20-poly1305@openssh.com,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
+&lt;/pre&gt;&lt;p&gt;
+But before configuring it needs to be tested. I cannot use remote windows scp tools like &lt;a href=&quot;https://filezilla-project.org/&quot;&gt;FileZilla&lt;/a&gt; or &lt;a href=&quot;https://winscp.net/eng/index.php&quot;&gt;WinSCP&lt;/a&gt; as HDD performance will affect results. Eventually I decided that data needs to go between /dev/zero and /dev/null - /dev/urandom has an additional performance hit.&lt;/p&gt;
+&lt;p&gt;On a side note, when using WinSCP, make sure to select SCP protocol instead of SFTP (default). Performance difference is huge.&lt;/p&gt;
+&lt;p&gt;Before changing any configuration:&lt;/p&gt;
+&lt;pre&gt;
+time cat /dev/zero | head -c 1024M | ssh someuser@localhost &#039;cat &amp;gt;/dev/null&#039;
+
+real    0m10.146s
+user    0m11.457s
+sys     0m2.348s
+&lt;/pre&gt;&lt;p&gt;
+To test if the result will be different when hardware AES256 cipher will be involved:&lt;/p&gt;
+&lt;pre&gt;
+time cat /dev/zero | head -c 1024M | ssh -c aes256-gcm@openssh.com someuser@localhost &#039;cat &amp;gt;/dev/null&#039;
+
+real    0m3.922s
+user    0m1.718s
+sys     0m1.920s
+&lt;/pre&gt;&lt;p&gt;
+Whoaa 2.5 times faster - nice. Now after changing sshd_config it should stay that fast by default.&lt;/p&gt;
+&lt;pre&gt;
+time cat /dev/zero | head -c 1024M | ssh someuser@localhost &#039;cat &amp;gt;/dev/null&#039;
+
+real    0m10.294s
+user    0m11.530s
+sys     0m2.195s
+&lt;/pre&gt;&lt;p&gt;
+No. It&#039;s still slow not to mention that lack of HW acceleration means higher CPU usage will prevent other server tasks to run faster...&lt;/p&gt;
+&lt;p&gt;So instead I added a line my client configuration in ~/.ssh/config with all supported ciphers but again in the preferred order with &lt;a href=&quot;mailto:aes256-gcm@openssh.com&quot;&gt;aes256-gcm@openssh.com&lt;/a&gt; first:&lt;/p&gt;
+&lt;pre&gt;
+real    0m3.790s
+user    0m1.672s
+sys     0m2.019s
+&lt;/pre&gt;&lt;p&gt;
+It works. &lt;/p&gt;
+&lt;p&gt;Of course it works. &lt;/p&gt;
+&lt;p&gt;Client configuration determines the order of ciphers to use, not the server - &lt;strike&gt;now to connect with maximum performance every user on every host needs to be configured to pick AES256 by default&lt;/strike&gt;.&lt;/p&gt;
+&lt;p&gt;When cipher lines are added to /etc/ssh/ssh_config, all ssh connections will use the configured order by default, there is no need to set it per host.&lt;/p&gt;
+&lt;p&gt;Result:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Have faster encrypted file transfers
+&lt;/li&gt;&lt;li&gt;Won&#039;t strain the servers that much with (1)
+&lt;/li&gt;&lt;li&gt;Have more free time.
+&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;It&#039;s a definitely win-win.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/ssh&quot;&gt;ssh&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/linux&quot;&gt;linux&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/openssl&quot;&gt;openssl&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/aes&quot;&gt;aes&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Thu, 03 Sep 2015 15:07:33 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">25 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/getting-most-out-ssh-hardware-acceleration-tuning-aes-ni#comments</comments>
+</item>
+<item>
+ <title>How to run another SSH daemon on Amazon EC2 - on a different port</title>
+ <link>https://turecki.net/second-sshd-on-ec2</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Running a separate SSH server only makes sense when a second SSHD will run using different settings. If settings are the same, port forwarding should be enough to just pass the traffic from one port to another:&lt;/p&gt;
+&lt;pre&gt;iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 20202 -j REDIRECT --to-port 22&lt;/pre&gt;&lt;p&gt;where 20202 is the new port and 22 is the default SSH port.&lt;/p&gt;
+&lt;p&gt;If SSHD settings should be separate, we need another sshd instance with a copy of current configuration files).&lt;/p&gt;
+&lt;p&gt;Please remember to change the alternative ssh port number (20202) to a custom port.&lt;/p&gt;
+&lt;pre&gt;ln -sf /usr/sbin/sshd /usr/sbin/alt_sshd
+cat /etc/init.d/sshd | sed -e &#039;/^.*sshd-keygen\s*$/! s/\([/ &quot;]\)sshd/\1alt_sshd/&#039; -e &#039;s/^\(\s\+\$SSHD\)/\1 -f \/etc\/ssh\/alt_sshd_config/I&#039; &amp;gt;/etc/init.d/alt_sshd
+cat /etc/ssh/sshd_config | sed -e &#039;s/^#*\s*\(pidfile.*\)sshd\.pid/\1alt_sshd.pid/I&#039; -e &#039;s/^#*\s*port\s\+[0-9]\+/Port 20202/I&#039; &amp;gt;/etc/ssh/alt_sshd_config
+cp -na /etc/sysconfig/sshd /etc/sysconfig/alt_sshd
+cp -na /etc/pam.d/sshd /etc/pam.d/alt_sshd
+chkconfig --add alt_sshd&lt;/pre&gt;&lt;p&gt;After running the commands above, modify your new configuration file /etc/ssh/alt_sshd/config and start the sshd:&lt;/p&gt;
+&lt;pre&gt;/etc/init.d/alt_sshd start&lt;/pre&gt;&lt;p&gt;The chkconfig command will ensure the alt_sshd will start automatically after system restart.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/linux&quot;&gt;linux&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/ssh&quot;&gt;ssh&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/optimization&quot;&gt;optimization&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Fri, 31 Oct 2014 11:15:18 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">21 at https://turecki.net</guid>
+ <comments>https://turecki.net/second-sshd-on-ec2#comments</comments>
+</item>
+</channel>
+</rss>

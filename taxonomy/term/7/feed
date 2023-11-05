@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://turecki.net"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+ <title>Michał Turecki - C</title>
+ <link>https://turecki.net/tags/c-0</link>
+ <description></description>
+ <language>en</language>
+<item>
+ <title>Compilation of PostgreSQL 8.3.7 on Visual Studio 2008</title>
+ <link>https://turecki.net/content/compilation-postgresql-837-visual-studio-2008</link>
+ <description>&lt;div class=&quot;field field-name-body field-type-text-with-summary field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;p&gt;Today I have encountered few problems while trying to compile PostgreSQL on Windows. PostgreSQL designed to work in *nix environments and it&#039;s native build system works flawlessly on Linux just as expected. Unfortunatelly on Windows this build system is used by minority of applications, partially using Microsoft&#039;s own version of make: nmake.&lt;/p&gt;
+&lt;p&gt;In PostgreSQL only libpq.dll can be compiled using nmake in Visual Studio Command Prompt which sets all necessary environment variables for compiler and linker (INCLUDE, LIBPATH etc, type &lt;code&gt;set&lt;/code&gt; in command prompt to verify these paths).&lt;/p&gt;
+&lt;p&gt;Make sure you have installed most recent version of the Windows SDK before compiling postgresql, current version is 6.1 and it&#039;s default installation path is C:\Program Files\Microsoft SDKs\Windows\v6.1. To compile only libpq.dll in command prompt type following:&lt;/p&gt;
+&lt;p&gt; &lt;code&gt;nmake /f win32.mak&lt;/code&gt;&lt;br /&gt;
+or optionally:&lt;br /&gt;
+ &lt;code&gt;nmake /f win32.mak DEBUG=1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To build whole project you need to satisfy all requirements regarding win32 build, specified in PostgresSQL documentation ( &lt;a href=&quot;http://www.postgresql.org/docs/8.3/interactive/install-win32-full.html&quot;&gt;http://www.postgresql.org/docs/8.3/interactive/install-win32-full.html&lt;/a&gt; ). I used ActiveState Perl, but as mentioned in documentation standard distribution would be sufficient, just be sure to update &lt;code&gt;src\tools\msvc\Mkvcbuild.pm&lt;/code&gt; if perl version differs from 5.8 ( replace &lt;code&gt;\lib\CORE\perl58.lib&lt;/code&gt; with valid perl library path ). When installing these requirements you can specify same folder for all installations, even ActiveState Perl, for example &lt;code&gt;C:\pgbuild&lt;/code&gt;, then only &lt;code&gt;bin&lt;/code&gt; directory in &lt;code&gt;C:\pgbuild folder&lt;/code&gt; must be added to PATH environment variable so all tools could be found by PostgreSQL build scripts.&lt;/p&gt;
+&lt;p&gt;PostgreSQL 8.3.7 default win32 build scripts are prepared for Visual Studio 8 (2005) and Windows Platform SDK obsoleted by Windows SDK so few changes are necessary to build PostgreSQL:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;In Project.pm replace &lt;code&gt;ProjectType=&quot;Visual C++&quot; Version=&quot;8.00&quot;&lt;/code&gt; with &lt;code&gt;ProjectType=&quot;Visual C++&quot; Version=&quot;9.00&quot;&lt;/code&gt;
+&lt;/li&gt;&lt;li&gt;In &lt;code&gt;src\include\port\win32.h&lt;/code&gt; replace &lt;code&gt;#define _WIN32_WINNT 0x0500&lt;/code&gt; with &lt;code&gt;#define _WIN32_WINNT 0x0501&lt;/code&gt; to satisfy requirement for IPPROTO_IPV6 conditionally defined in Windows SDK. Updating src\include\pg_config_os.h might be also necessary.
+&lt;/li&gt;&lt;li&gt;To build libpq.dll I have needed to supply src\interfaces\libpq\libpq.rc file by copying it from src\interfaces\libpq\libpq.rc.in, elegant solution would be to add:&lt;br /&gt;
+&lt;code&gt;&quot;libpq.rc&quot; :&lt;br /&gt;
+	if not exist &quot;libpq.rc&quot; copy &quot;libpq.rc.in&quot; &quot;libpq.rc&quot;&lt;/code&gt;&lt;br /&gt;
+to src\interfaces\libpq\win32.mak just before line beginning with: &lt;code&gt;CPP_PROJ=&lt;/code&gt;.
+&lt;/li&gt;&lt;li&gt;Update paths in &lt;code&gt;src\tools\msvc\config.pl&lt;/code&gt; to match previously installed dependencies.
+&lt;/li&gt;&lt;/ol&gt;
+&lt;p&gt;To build PostgreSQL just type build in Visual Studio Command Prompt in src\tools\msvc folder. All possible problems would appear yellow and red and generally would be simple to solve by satisfying dependencies like include files (eg. zlib.h) or required libraries (zlib.lib and zdll.lib which need to be grabbed from the net).&lt;/p&gt;
+&lt;p&gt;Take a look at other tools in &lt;code&gt;src\tools\msvc&lt;/code&gt;, clean would be your inseparable friend and install with destination folder passed as parameter will ease an installation of your fresh PostgreSQL build.&lt;/p&gt;
+&lt;p&gt;Have fun hacking pg and feel free to comment your experiences.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;field field-name-taxonomy-vocabulary-1 field-type-taxonomy-term-reference field-label-hidden&quot;&gt;&lt;div class=&quot;field-items&quot;&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/programming&quot;&gt;programming&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/db&quot;&gt;db&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item even&quot;&gt;&lt;a href=&quot;/tags/c-0&quot;&gt;C&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;field-item odd&quot;&gt;&lt;a href=&quot;/tags/windows&quot;&gt;windows&lt;/a&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</description>
+ <pubDate>Sun, 17 May 2009 11:39:21 +0000</pubDate>
+ <dc:creator>Michał Turecki</dc:creator>
+ <guid isPermaLink="false">3 at https://turecki.net</guid>
+ <comments>https://turecki.net/content/compilation-postgresql-837-visual-studio-2008#comments</comments>
+</item>
+</channel>
+</rss>
